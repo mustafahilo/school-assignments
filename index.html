@@ -1502,7 +1502,21 @@ create policy "Allow public delete announcements"
       renderManageList();
     }
 
-    initApp();
+   initApp();
   </script>
+  <script>
+  (() => {
+    const hideDbButton = () => {
+      document.querySelectorAll("button, a").forEach((el) => {
+        if (el.textContent && el.textContent.includes("قاعدة البيانات")) {
+          el.style.display = "none";
+        }
+      });
+    };
+    document.addEventListener("DOMContentLoaded", hideDbButton);
+    window.addEventListener("load", hideDbButton);
+    setTimeout(hideDbButton, 300);
+  })();
+</script>
 </body>
 </html>
