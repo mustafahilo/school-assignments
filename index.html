@@ -3,2339 +3,1563 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>التواصل المدرسي للواجبات اليومية — ادارة ثانوية المتفوقين الاولى للبنين</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>منصة التواصل المدرسي | ثانوية المتفوقين الأولى للبنين</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Cairo', 'system-ui', '-apple-system', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              200: '#bfdbfe',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a',
-              950: '#172554',
-            },
-          },
-        },
-      },
-    };
-  </script>
   <style>
-    *, *::before, *::after {
+    :root {
+      --bg: #f3f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --primary-soft: #eff6ff;
+      --success: #15803d;
+      --success-soft: #f0fdf4;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --warn: #b45309;
+      --warn-soft: #fffbeb;
+      --shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+    }
+
+    * {
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 260px);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.65;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 20px 16px 56px;
     }
-    .animate-fade-in {
-      animation: fadeIn 0.22s ease-out;
+
+    .topbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 8px;
+      background: var(--surface-soft);
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 9px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      margin: 0 0 14px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select,
+    textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 10px 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #334155;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 7px 13px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn {
+      border: none;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.18s ease;
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    .btn-soft {
+      background: var(--surface-soft);
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+
+    .btn-soft:hover:not(:disabled) {
+      background: #eef2f6;
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    .btn-warn {
+      background: var(--warn-soft);
+      color: var(--warn);
+      border: 1px solid #fde68a;
+    }
+
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 0.82rem;
+      border-radius: 9px;
+    }
+
+    .alert {
+      padding: 12px 15px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    .alert-info {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      border: 1px solid #bfdbfe;
+    }
+
+    .alert-success {
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    .session-bar {
+      background: var(--primary-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .badge-grade {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+    }
+
+    .badge-general {
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    .badge-subject {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .badge-closed {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .post-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .post-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px 17px;
+      background: #fff;
+    }
+
+    .post-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .post-date {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .post-body {
+      white-space: pre-line;
+      font-size: 0.96rem;
+      color: #1e293b;
+      margin: 6px 0 10px;
+    }
+
+    .post-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .comments-box {
+      margin-top: 12px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .comment-item {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 9px 12px;
+      margin-bottom: 8px;
+    }
+
+    .comment-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+    }
+
+    .comment-author {
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .badge-teacher-reply {
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 1px 8px;
+      border-radius: 999px;
+      font-size: 0.73rem;
+      font-weight: 800;
+      margin-right: 6px;
+    }
+
+    .comment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .comment-form-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .comment-form-row input[type="text"] {
+      flex: 1 1 200px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    th {
+      background: var(--surface-soft);
+      font-weight: 800;
+      color: #334155;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 24px 14px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      background: var(--surface-soft);
+      border-radius: 12px;
+      border: 1px dashed #cbd5e1;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-brand-100 selection:text-brand-900">
-
-  <!-- حاوية الإشعارات العائمة -->
-  <div id="toast-container" class="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
-
-  <!-- الشريط العلوي -->
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 shadow-2xs">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-11 h-11 rounded-2xl bg-brand-700 text-white flex items-center justify-center text-xl font-extrabold shadow-xs shrink-0">
-          📘
-        </div>
-        <div class="min-w-0">
-          <h1 class="text-base sm:text-xl font-extrabold text-slate-900 leading-tight truncate">
-            التواصل المدرسي للواجبات اليومية
-          </h1>
-          <p class="text-xs sm:text-sm font-bold text-brand-800 truncate">
-            ادارة ثانوية المتفوقين الاولى للبنين
-          </p>
-        </div>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">
+        <h1>ثانوية المتفوقين الأولى للبنين</h1>
+        <p>منصة التبليغات اليومية والتعاميم العامة والتواصل مع أولياء الأمور</p>
       </div>
 
-      <div class="flex items-center gap-2 shrink-0">
-        <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200">
-          <button
-            type="button"
-            id="tab-parent"
-            onclick="switchMode('parent')"
-            class="px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-brand-700 text-white shadow-xs"
-          >
-            ولي الأمر
-          </button>
-          <button
-            type="button"
-            id="tab-teacher"
-            onclick="switchMode('teacher')"
-            class="px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer text-slate-600 hover:text-slate-900"
-          >
-            المدرس
-          </button>
-        </div>
-
-        <button
-          type="button"
-          onclick="openDbSetupModal()"
-          title="إعداد الربط المشترك وقاعدة البيانات"
-          class="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition cursor-pointer"
-        >
-          <span>🗄️</span>
-          <span class="hidden sm:inline">قاعدة البيانات</span>
+      <div class="mode-switch" role="tablist" aria-label="وضع العرض">
+        <button id="tabParent" class="mode-btn active" type="button" onclick="switchMode('parent')">
+          واجهة ولي الأمر
+        </button>
+        <button id="tabTeacher" class="mode-btn" type="button" onclick="switchMode('teacher')">
+          دخول المدرسين والإدارة
         </button>
       </div>
-    </div>
-  </header>
-
-  <!-- المحتوى الرئيسي -->
-  <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-5 sm:py-6 space-y-6">
+    </header>
 
     <!-- ==================== واجهة ولي الأمر ==================== -->
-    <section id="parent-view" class="space-y-5 animate-fade-in">
-
-      <div
-        id="parent-local-banner"
-        class="hidden rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs sm:text-sm text-amber-950 flex flex-wrap items-center justify-between gap-3"
-      >
-        <div class="flex items-start sm:items-center gap-2.5">
-          <span class="text-lg shrink-0">⚠️</span>
-          <p class="leading-relaxed font-semibold">
-            الصفحة تعمل حالياً بـ <strong>الوضع المحلي</strong> على هذا الجهاز فقط؛ لكي تصل تبليغات المدرسين تلقائياً إلى هواتف أولياء الأمور يرجى ربط <strong>Supabase</strong> من زر «قاعدة البيانات».
-          </p>
+    <section id="parentView">
+      <div class="card">
+        <div class="card-title">
+          <span>اختر الصف والشعبة لعرض التبليغات اليومية</span>
+          <span class="post-date">التبليغات اليومية للصفوف تبقى لمدة 7 أيام</span>
         </div>
-        <button
-          type="button"
-          onclick="openDbSetupModal()"
-          class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-200/80 hover:bg-amber-300/80 text-amber-950 border border-amber-300 cursor-pointer shrink-0"
-        >
-          إعداد الربط
-        </button>
-      </div>
 
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <span class="text-xs sm:text-sm font-extrabold text-slate-800">اختر الصف والشعبة:</span>
-            <span id="connection-status-pill" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200"></span>
+        <div class="grid-2">
+          <div>
+            <label>الصف الدراسي</label>
+            <div id="parentGradeChips" class="chips"></div>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onclick="refreshPostsManual()"
-              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer"
-            >
-              <span>🔄</span>
-              <span>تحديث</span>
-            </button>
-            <button
-              type="button"
-              onclick="openInstallModal()"
-              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-brand-50 hover:bg-brand-100 text-brand-800 border border-brand-200 transition cursor-pointer"
-            >
-              <span>📲</span>
-              <span>أضف إلى شاشة الهاتف</span>
-            </button>
+          <div>
+            <label>الشعبة</label>
+            <div id="parentSectionChips" class="chips"></div>
           </div>
-        </div>
-
-        <div id="parent-grade-buttons" class="grid grid-cols-3 sm:grid-cols-6 gap-2"></div>
-
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
-          <div id="parent-section-buttons" class="flex items-center gap-2"></div>
-          <button
-            type="button"
-            onclick="saveCurrentChildShortcut()"
-            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition cursor-pointer"
-          >
-            <span>⭐</span>
-            <span>حفظ اختصار هذه الشعبة</span>
-          </button>
-        </div>
-
-        <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2">
-          <span class="text-xs font-bold text-slate-500">اختصارات سريعة:</span>
-          <div id="saved-children-list" class="flex flex-wrap items-center gap-2"></div>
         </div>
       </div>
 
-      <section class="space-y-3">
-        <div class="flex items-center justify-between gap-2">
-          <h2 id="parent-active-title" class="text-sm sm:text-base font-extrabold text-slate-900"></h2>
-          <a href="#general-announcements-section" class="text-xs font-bold text-brand-700 hover:underline">
-            التعميمات العامة ↓
-          </a>
+      <div class="card">
+        <div class="card-title">
+          <span id="parentSelectedHeading">تبليغات الصف الأول — شعبة أ</span>
+          <span id="parentPostsCount" class="badge badge-grade">0 تبليغ</span>
         </div>
-        <div id="section-posts-list" class="space-y-3"></div>
-      </section>
+        <div id="parentGradePosts" class="post-list"></div>
+      </div>
 
-      <section id="general-announcements-section" class="space-y-3 pt-2">
-        <div class="flex items-center gap-2">
-          <span class="text-base">📢</span>
-          <h2 class="text-sm sm:text-base font-extrabold text-slate-900">التعميمات العامة</h2>
+      <div class="card">
+        <div class="card-title">
+          <span>التعميمات العامة للمدرسة</span>
+          <span id="parentGeneralCount" class="badge badge-general">0 تعميم</span>
         </div>
-        <div id="general-posts-list" class="space-y-3"></div>
-      </section>
-
+        <div id="parentGeneralPosts" class="post-list"></div>
+      </div>
     </section>
 
     <!-- ==================== واجهة المدرس والإدارة ==================== -->
-    <section id="teacher-view" class="hidden space-y-6 animate-fade-in">
-
-      <!-- شريط هوية الحساب المتصل وقفل الجلسة التلقائي (30 دقيقة) -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-          <span class="px-2.5 py-1 rounded-xl bg-brand-50 text-brand-900 border border-brand-200 font-extrabold">
-            👨‍🏫 <span id="active-teacher-badge">حساب المدرس</span>
-          </span>
-          <span id="active-teacher-role-pill" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs"></span>
-          <span class="text-[11px] font-semibold text-slate-500">
-            • قفل تلقائي بعد 30 دقيقة من الخمول
-          </span>
+    <section id="teacherView" class="hidden">
+      <!-- نموذج تسجيل الدخول -->
+      <div id="loginCard" class="card">
+        <div class="card-title">
+          <span>تسجيل دخول المدرسين والإدارة</span>
+          <span class="post-date">قفل تلقائي بعد 30 دقيقة من الخمول</span>
         </div>
 
-        <button
-          type="button"
-          onclick="lockTeacherSession()"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 cursor-pointer"
-        >
-          <span>🔒</span>
-          <span>قفل وضع المدرس</span>
-        </button>
+        <div class="grid-2">
+          <div>
+            <label for="loginAccountSelect">الحساب</label>
+            <select id="loginAccountSelect"></select>
+          </div>
+          <div>
+            <label for="loginPinInput">الرمز السري</label>
+            <input id="loginPinInput" type="password" inputmode="numeric" placeholder="أدخل الرمز السري" onkeydown="if(event.key==='Enter') handleLogin()" />
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="loginBtn" class="btn btn-primary" type="button" onclick="handleLogin()">دخول</button>
+        </div>
+        <div id="loginFeedback"></div>
       </div>
 
-      <!-- نموذج نشر واجب أو تبليغ -->
-      <form onsubmit="handleTeacherSubmit(event)" class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-2xs space-y-5">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+      <!-- لوحة العمل بعد تسجيل الدخول -->
+      <div id="dashboardArea" class="hidden">
+        <div class="session-bar">
           <div>
-            <h2 class="text-base sm:text-lg font-extrabold text-slate-900">نشر واجب أو تبليغ سريع</h2>
-            <p class="text-xs text-slate-500">يُربط التبليغ بحسابك تلقائياً ويُظهر اسمك ومادتك المعتمدة</p>
+            <strong id="sessionUserTitle">مرحباً</strong>
+            <span id="sessionRoleBadge" class="badge badge-subject" style="margin-right: 6px;">مدرس</span>
+            <div id="sessionTimerText" class="post-date">الجلسة نشطة • تنتهي بعد 30 دقيقة من عدم النشاط</div>
           </div>
-          <button
-            type="button"
-            onclick="openInstallModal()"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
-          >
-            <span>📲</span>
-            <span>أضف إلى شاشة الهاتف</span>
-          </button>
+          <button class="btn btn-soft btn-sm" type="button" onclick="handleLogout('تم تسجيل الخروج بنجاح.')">تسجيل الخروج</button>
         </div>
 
-        <!-- تخصيص المادة لهذا التبليغ عند الحاجة -->
-        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-3">
-          <div class="text-xs sm:text-sm">
-            <span class="font-bold text-slate-500">المادة الافتراضية لحسابك:</span>
-            <span id="default-subject-label" class="font-extrabold text-brand-900 mr-1">—</span>
+        <!-- نشر تبليغ جديد -->
+        <div class="card">
+          <div class="card-title">
+            <span>نشر تبليغ أو تعميم جديد</span>
+            <span class="post-date">التبليغات اليومية للصفوف تُعرض لمدة 7 أيام</span>
           </div>
-          <div class="w-full sm:w-64">
-            <label for="teacher-subject-override" class="sr-only">تخصيص المادة لهذا التبليغ</label>
-            <input
-              id="teacher-subject-override"
-              type="text"
-              placeholder="مادة مخصصة لهذا التبليغ (اختياري)"
-              class="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:outline-none focus:border-brand-600"
-            />
-          </div>
-        </div>
 
-        <!-- 1. اختيار الصف أو التعميم العام -->
-        <div class="space-y-2">
-          <span class="block text-xs font-extrabold text-slate-800">1. اختر الصف أو التعميم العام:</span>
-          <div id="teacher-grade-buttons" class="grid grid-cols-3 sm:grid-cols-7 gap-2"></div>
-        </div>
-
-        <!-- 2. اختيار الشعبة -->
-        <div id="teacher-section-wrap" class="space-y-2">
-          <span class="block text-xs font-extrabold text-slate-800">2. اختر الشعبة:</span>
-          <div id="teacher-section-buttons" class="flex items-center gap-2"></div>
-        </div>
-
-        <!-- 3. نص التبليغ -->
-        <div class="space-y-1.5">
-          <label for="teacher-message" class="block text-xs font-extrabold text-slate-800">
-            3. نص الواجب أو التبليغ
-          </label>
-          <textarea
-            id="teacher-message"
-            rows="4"
-            required
-            placeholder="اكتب هنا نص الواجب أو التبليغ... مثلاً: حل تمارين صفحة 24 ليوم غد الخميس."
-            class="w-full rounded-2xl border border-slate-300 bg-white p-3.5 text-xs sm:text-sm leading-relaxed focus:outline-none focus:border-brand-600"
-          ></textarea>
-        </div>
-
-        <!-- مرفق صورة أو ملف -->
-        <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3.5 space-y-2.5">
-          <div class="flex items-center justify-between gap-2">
-            <label for="teacher-attachment" class="text-xs font-bold text-slate-800 cursor-pointer">
-              📎 إرفاق صورة (ضغط تلقائي حتى عرض 1000px وجودة 0.72) أو ملف خفيف — اختياري
-            </label>
-            <button
-              type="button"
-              id="clear-attachment-btn"
-              onclick="clearAttachment()"
-              class="hidden text-xs font-bold text-rose-600 hover:text-rose-700 cursor-pointer"
-            >
-              إزالة
-            </button>
-          </div>
-          <input
-            id="teacher-attachment"
-            type="file"
-            accept="image/*,.pdf,.doc,.docx"
-            onchange="handleAttachmentChange(event)"
-            class="block w-full text-xs text-slate-600 file:ml-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-50 file:text-brand-800 hover:file:bg-brand-100 cursor-pointer"
-          />
-          <p id="attachment-info" class="text-[11px] font-semibold text-emerald-700"></p>
-        </div>
-
-        <div class="flex flex-wrap items-center justify-end gap-2.5 pt-1">
-          <button
-            type="button"
-            onclick="resetTeacherForm()"
-            class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
-          >
-            مسح الحقل
-          </button>
-          <button
-            type="submit"
-            id="publish-btn"
-            class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-brand-700 hover:bg-brand-800 text-white shadow-xs cursor-pointer"
-          >
-            نشر التبليغ
-          </button>
-        </div>
-      </form>
-
-      <!-- إدارة وحذف التبليغات والتحكم بالتعليقات -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-3">
-        <div class="flex items-center justify-between gap-2">
-          <h3 class="text-sm sm:text-base font-extrabold text-slate-900">التبليغات المنشورة (إدارة وحذف والتحكم بالتعليقات)</h3>
-          <span id="manage-count" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">0 منشور</span>
-        </div>
-        <div id="manage-list" class="space-y-2 max-h-[28rem] overflow-y-auto"></div>
-      </div>
-
-      <!-- لوحة إدارة جدول المدرسين والرموز (تظهر للمدير فقط is_admin = true) -->
-      <section id="admin-teachers-panel" class="hidden bg-white rounded-2xl border border-brand-200 p-4 sm:p-6 shadow-2xs space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div>
-            <h3 class="text-base sm:text-lg font-extrabold text-brand-950">🛡️ إدارة جدول المدرسين والرموز (50 مدرساً + الإدارة)</h3>
-            <p class="text-xs text-slate-500">إدخال وتعديل أسماء المدرسين والمواد والرموز السرية وتفعيل أو تعطيل أي حساب</p>
-          </div>
-          <button
-            type="button"
-            onclick="loadAdminTeachersList()"
-            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-50 hover:bg-brand-100 text-brand-900 border border-brand-200 cursor-pointer"
-          >
-            🔄 تحديث القائمة
-          </button>
-        </div>
-
-        <form onsubmit="handleAdminSaveTeacher(event)" class="rounded-2xl bg-slate-50 border border-slate-200 p-4 space-y-3">
-          <div class="text-xs font-extrabold text-slate-800">إضافة أو تحديث بيانات حساب مدرس:</div>
-          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
+          <div class="grid-3">
             <div>
-              <label for="admin-t-id" class="block text-[11px] font-bold text-slate-700 mb-1">المعرّف (ID)</label>
-              <input
-                id="admin-t-id"
-                type="text"
-                required
-                placeholder="t-01"
-                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
-              />
+              <label>الجهة المستهدفة</label>
+              <div id="postGradeChips" class="chips"></div>
             </div>
-            <div class="sm:col-span-2">
-              <label for="admin-t-name" class="block text-[11px] font-bold text-slate-700 mb-1">اسم المدرس</label>
-              <input
-                id="admin-t-name"
-                type="text"
-                required
-                placeholder="مثال: أ. علي حسين"
-                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
-              />
+
+            <div id="postSectionWrapper">
+              <label>الشعبة</label>
+              <div id="postSectionChips" class="chips"></div>
             </div>
+
             <div>
-              <label for="admin-t-subject" class="block text-[11px] font-bold text-slate-700 mb-1">المادة</label>
-              <input
-                id="admin-t-subject"
-                type="text"
-                required
-                placeholder="الرياضيات"
-                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
-              />
-            </div>
-            <div>
-              <label for="admin-t-pin" class="block text-[11px] font-bold text-slate-700 mb-1">الرمز السري (PIN)</label>
-              <input
-                id="admin-t-pin"
-                type="text"
-                required
-                placeholder="2001"
-                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
-              />
+              <label for="postSubjectInput">المادة / العنوان المختصر</label>
+              <input id="postSubjectInput" type="text" maxlength="60" placeholder="مثال: رياضيات أو تعميم إداري" />
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
-            <div class="flex flex-wrap items-center gap-4 text-xs font-bold text-slate-700">
-              <label class="inline-flex items-center gap-1.5 cursor-pointer">
-                <input id="admin-t-active" type="checkbox" checked class="rounded border-slate-300" />
-                <span>حساب نشط</span>
+          <div style="margin-top: 14px;">
+            <label for="postBodyInput">نص التبليغ</label>
+            <textarea id="postBodyInput" maxlength="2000" placeholder="اكتب الواجب اليومي أو التبليغ هنا..."></textarea>
+          </div>
+
+          <div style="margin-top: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button id="publishPostBtn" class="btn btn-primary" type="button" onclick="handlePublishPost()">نشر التبليغ</button>
+            <span id="publishFeedback"></span>
+          </div>
+        </div>
+
+        <!-- قائمة التبليغات المنشورة -->
+        <div class="card">
+          <div class="card-title">
+            <span>التبليغات النشطة الحالية</span>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <label style="display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 0.85rem; cursor: pointer;">
+                <input id="onlyMineCheckbox" type="checkbox" onchange="renderTeacherPosts()" />
+                <span>تبليغاتي فقط</span>
               </label>
-              <label class="inline-flex items-center gap-1.5 cursor-pointer">
-                <input id="admin-t-is-admin" type="checkbox" class="rounded border-slate-300" />
-                <span>صلاحية إدارة</span>
-              </label>
+              <button class="btn btn-soft btn-sm" type="button" onclick="refreshAllData(true)">تحديث</button>
             </div>
-            <div class="flex items-center gap-2">
-              <button
-                type="button"
-                onclick="clearAdminTeacherForm()"
-                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 cursor-pointer"
-              >
-                تفريغ الحقول
-              </button>
-              <button
-                type="submit"
-                id="admin-save-teacher-btn"
-                class="px-5 py-2 rounded-xl text-xs font-extrabold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer"
-              >
-                حفظ السجل
+          </div>
+          <div id="teacherPostsList" class="post-list"></div>
+        </div>
+
+        <!-- لوحة إدارة حسابات المدرسين والرموز (تظهر للإدارة فقط) -->
+        <div id="adminPanelCard" class="card hidden">
+          <div class="card-title">
+            <span>إدارة حسابات المدرسين والرموز السرية (50 حساباً)</span>
+            <span class="badge badge-general">صلاحية الإدارة</span>
+          </div>
+
+          <div class="grid-3" style="margin-bottom: 14px;">
+            <div>
+              <label for="adminTeacherSelect">اختر الحساب</label>
+              <select id="adminTeacherSelect" onchange="fillAdminTeacherForm()"></select>
+            </div>
+            <div>
+              <label for="adminTeacherNameInput">اسم المدرس</label>
+              <input id="adminTeacherNameInput" type="text" maxlength="80" />
+            </div>
+            <div>
+              <label for="adminTeacherSubjectInput">المادة</label>
+              <input id="adminTeacherSubjectInput" type="text" maxlength="60" />
+            </div>
+          </div>
+
+          <div class="grid-3" style="margin-bottom: 14px;">
+            <div>
+              <label for="adminTeacherPinInput">الرمز السري</label>
+              <input id="adminTeacherPinInput" type="text" maxlength="20" />
+            </div>
+            <div>
+              <label for="adminTeacherActiveSelect">حالة الحساب</label>
+              <select id="adminTeacherActiveSelect">
+                <option value="true">نشط</option>
+                <option value="false">موقوف</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button id="saveTeacherBtn" class="btn btn-primary" type="button" onclick="handleAdminSaveTeacher()" style="width: 100%;">
+                حفظ بيانات الحساب
               </button>
             </div>
           </div>
-        </form>
 
-        <div class="overflow-x-auto rounded-xl border border-slate-200">
-          <table class="w-full text-right text-xs">
-            <thead class="bg-slate-100 text-slate-700 font-extrabold">
-              <tr>
-                <th class="py-2.5 px-3">المعرّف</th>
-                <th class="py-2.5 px-3">اسم المدرس</th>
-                <th class="py-2.5 px-3">المادة</th>
-                <th class="py-2.5 px-3">الرمز</th>
-                <th class="py-2.5 px-3">الحالة</th>
-                <th class="py-2.5 px-3">تعديل</th>
-              </tr>
-            </thead>
-            <tbody id="admin-teachers-tbody" class="divide-y divide-slate-100"></tbody>
-          </table>
+          <div id="adminFeedback"></div>
+
+          <div class="table-wrap" style="margin-top: 14px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>المعرّف</th>
+                  <th>الاسم</th>
+                  <th>المادة</th>
+                  <th>الرمز</th>
+                  <th>الحالة</th>
+                  <th>إجراء</th>
+                </tr>
+              </thead>
+              <tbody id="adminTeachersTableBody"></tbody>
+            </table>
+          </div>
         </div>
-      </section>
-
+      </div>
     </section>
-  </main>
-
-  <!-- التذييل المطلوب حصراً -->
-  <footer class="bg-white border-t border-slate-200 mt-10">
-    <div class="max-w-5xl mx-auto px-4 py-4 text-center">
-      <p class="text-xs sm:text-sm font-bold text-slate-700">
-        إعداد وتطوير: مصطفى حلو علي
-      </p>
-    </div>
-  </footer>
-
-  <!-- نافذة إدخال الرمز السري -->
-  <div id="teacher-pin-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
-    <form onsubmit="handleTeacherPinSubmit(event)" class="bg-white rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-xl border border-slate-200 space-y-4 animate-fade-in">
-      <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">🔐</span>
-          <h3 class="text-base font-extrabold text-slate-900">دخول الهيئة التعليمية</h3>
-        </div>
-        <button
-          type="button"
-          onclick="closeTeacherPinModal(true)"
-          class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-          aria-label="إغلاق"
-        >
-          ✕
-        </button>
-      </div>
-
-      <p class="text-xs text-slate-600 leading-relaxed">
-        أدخل الرمز السري المخصص لحسابك (تُغلق الجلسة تلقائياً بعد 30 دقيقة من الخمول).
-      </p>
-
-      <div>
-        <label for="teacher-pin-input" class="block text-xs font-bold text-slate-700 mb-1">الرمز السري (PIN)</label>
-        <input
-          id="teacher-pin-input"
-          type="password"
-          autocomplete="off"
-          required
-          placeholder="••••"
-          class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-center tracking-widest focus:outline-none focus:border-brand-600"
-        />
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-1">
-        <button
-          type="button"
-          onclick="closeTeacherPinModal(true)"
-          class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"
-        >
-          إلغاء
-        </button>
-        <button
-          type="submit"
-          id="verify-pin-btn"
-          class="px-5 py-2 rounded-xl text-xs font-extrabold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer"
-        >
-          تحقق ودخول
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <!-- نافذة الإرشاد: أضف إلى شاشة الهاتف -->
-  <div id="install-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-200 space-y-4 animate-fade-in">
-      <div class="flex items-center justify-between gap-3">
-        <h3 class="text-base sm:text-lg font-extrabold text-slate-900">أضف إلى شاشة الهاتف</h3>
-        <button
-          type="button"
-          onclick="closeInstallModal()"
-          class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-          aria-label="إغلاق"
-        >
-          ✕
-        </button>
-      </div>
-
-      <div class="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
-        <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-1">
-          <div class="font-extrabold text-slate-900">🤖 أندرويد (Chrome / Samsung Internet):</div>
-          <p>افتح قائمة المتصفح (⋮ في الأعلى) ثم اختر <strong>«إضافة إلى الشاشة الرئيسية»</strong> أو <strong>«تثبيت التطبيق»</strong>.</p>
-        </div>
-        <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-1">
-          <div class="font-extrabold text-slate-900">🍎 آيفون (Safari):</div>
-          <p>اضغط على زر المشاركة (مربع وبداخله سهم للأعلى) ثم مرّر للأسفل واختر <strong>«إضافة إلى الشاشة الرئيسية»</strong>.</p>
-        </div>
-      </div>
-
-      <div class="flex justify-end">
-        <button
-          type="button"
-          onclick="closeInstallModal()"
-          class="px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-brand-700 text-white hover:bg-brand-800 cursor-pointer"
-        >
-          حسناً
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة إعداد الربط المشترك وقاعدة البيانات Supabase -->
-  <div id="db-setup-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-xl border border-slate-200 space-y-4 animate-fade-in max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between gap-3">
-        <div>
-          <h3 class="text-base sm:text-lg font-extrabold text-slate-900">إعداد الربط المشترك (Supabase)</h3>
-          <p id="db-mode-badge" class="text-xs font-bold text-slate-500 mt-0.5"></p>
-        </div>
-        <button
-          type="button"
-          onclick="closeDbSetupModal()"
-          class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-          aria-label="إغلاق"
-        >
-          ✕
-        </button>
-      </div>
-
-      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3.5 space-y-3">
-        <div class="grid grid-cols-1 gap-3">
-          <div>
-            <label for="supabase-url-input" class="block text-xs font-bold text-slate-700 mb-1">SUPABASE_URL</label>
-            <input
-              id="supabase-url-input"
-              type="url"
-              dir="ltr"
-              placeholder="https://your-project-ref.supabase.co"
-              class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-left focus:outline-none focus:border-brand-600"
-            />
-          </div>
-          <div>
-            <label for="supabase-key-input" class="block text-xs font-bold text-slate-700 mb-1">SUPABASE_ANON_KEY</label>
-            <input
-              id="supabase-key-input"
-              type="text"
-              dir="ltr"
-              placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-left focus:outline-none focus:border-brand-600"
-            />
-          </div>
-        </div>
-        <div class="flex flex-wrap items-center justify-end gap-2">
-          <button
-            type="button"
-            onclick="clearSupabaseCredentials()"
-            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 cursor-pointer"
-          >
-            الوضع المحلي فقط
-          </button>
-          <button
-            type="button"
-            onclick="saveSupabaseCredentials()"
-            class="px-4 py-1.5 rounded-xl text-xs font-extrabold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer"
-          >
-            حفظ واختبار الاتصال
-          </button>
-        </div>
-      </div>
-
-      <div class="flex justify-end">
-        <button
-          type="button"
-          onclick="closeDbSetupModal()"
-          class="px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-slate-800 text-white hover:bg-slate-900 cursor-pointer"
-        >
-          إغلاق
-        </button>
-      </div>
-    </div>
   </div>
 
   <script>
-    // ==================== إعدادات Supabase والمدة الزمنية للجلسة ====================
-    const SUPABASE_CONFIG = {
-      SUPABASE_URL: "https://adhxcszvwijpxonnmkdv.supabase.co",
-      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkaHhjc3p2d2lqcHhvbm5ta2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2MTUyMDUsImV4cCI6MjExMTE5MTIwNX0._6F16bEI6yJPZ4lw8qVdWbf7yeRePGzgE_PIn4tDDIk",
-      TABLE_NAME: "announcements",
-      COMMENTS_TABLE_NAME: "announcement_comments",
-    };
+    // =========================================================================
+    // إعدادات النظام وقاعدة البيانات (Supabase)
+    // =========================================================================
+    const SUPABASE_URL = "https://wuxoxeknhahvxexkssrx.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eG94ZWtuaGFodnhleGtzc3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MTY4NzUsImV4cCI6MjA4NzM5Mjg3NX0.119X5nZ48r7w4R3_a4tJryEHQ9uP9p98_jB5m8b0b3M";
 
-    const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 دقيقة قفل تلقائي عند الخمول
-    const SUPABASE_OVERRIDE_KEY = 'mutafawoqeen1_supabase_override_v1';
-    const POSTS_STORAGE_KEY = 'mutafawoqeen1_daily_posts_v1';
-    const COMMENTS_STORAGE_KEY = 'mutafawoqeen1_post_comments_v1';
-    const CHILDREN_STORAGE_KEY = 'mutafawoqeen1_parent_shortcuts_v1';
-    const TEACHER_SESSION_KEY = 'mutafawoqeen1_teacher_session_v2';
+    const GRADES = ["الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس"];
+    const SECTIONS = ["أ", "ب"];
+    const DAILY_RETENTION_DAYS = 7;
+    const DAILY_RETENTION_MS = DAILY_RETENTION_DAYS * 24 * 60 * 60 * 1000;
+    const SESSION_IDLE_MS = 30 * 60 * 1000;
+    const MAX_COMMENT_LENGTH = 250;
 
-    const GRADES = [
-      { id: '1', label: 'الأول', icon: '1️⃣' },
-      { id: '2', label: 'الثاني', icon: '2️⃣' },
-      { id: '3', label: 'الثالث', icon: '3️⃣' },
-      { id: '4', label: 'الرابع', icon: '4️⃣' },
-      { id: '5', label: 'الخامس', icon: '5️⃣' },
-      { id: '6', label: 'السادس', icon: '6️⃣' },
+    // قائمة افتراضية لـ 50 حساب مدرس + حساب الإدارة في حال عدم تحميل الجدول بعد
+    const FALLBACK_ACCOUNTS = [
+      { id: "admin", teacher_name: "الإدارة المدرسية", subject: "الإدارة", pin: "990001", is_admin: true, active: true },
+      ...Array.from({ length: 50 }, (_, idx) => {
+        const num = String(idx + 1).padStart(2, "0");
+        return {
+          id: `t-${num}`,
+          teacher_name: `مدرس ${num}`,
+          subject: "مادة دراسية",
+          pin: `10${num}`,
+          is_admin: false,
+          active: true
+        };
+      })
     ];
 
-    let state = {
-      mode: 'parent',
-      parentGrade: '1',
-      parentSection: 'أ',
-      teacherGrade: '1',
-      teacherSection: 'أ',
+    const state = {
+      mode: "parent",
+      parentGrade: "الأول",
+      parentSection: "أ",
+      postGrade: "الأول",
+      postSection: "أ",
       posts: [],
       commentsByPost: {},
-      openCommentPostIds: {},
-      savedChildren: [],
-      pendingAttachment: null,
-      cloudConnected: false,
-      teacherSession: null,
-      adminTeachers: [],
+      openComments: {},
+      teacherAccounts: [...FALLBACK_ACCOUNTS],
+      session: null, // { id, name, subject, isAdmin, expiresAt }
+      idleTimer: null,
+      countdownTimer: null
     };
 
-    let idleTimerId = null;
+    // =========================================================================
+    // دوال مساعدة للتاريخ والمدة (7 أيام للتبليغات اليومية، والتعميمات العامة تبقى)
+    // =========================================================================
+    function isDailyPostExpired(post) {
+      if (!post || post.grade === "GENERAL") return false;
+      const createdTime = Date.parse(post.created_at || post.createdAt || "");
+      if (Number.isNaN(createdTime)) return false;
+      return (Date.now() - createdTime) > DAILY_RETENTION_MS;
+    }
+
+    function filterActivePosts(rawPosts) {
+      return (rawPosts || []).filter((post) => !isDailyPostExpired(post));
+    }
+
+    function formatDateAr(isoString) {
+      if (!isoString) return "";
+      const d = new Date(isoString);
+      if (Number.isNaN(d.getTime())) return "";
+      return d.toLocaleString("ar-IQ", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
 
     function escapeHtml(str) {
-      return String(str ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toast-container');
-      if (!container) return;
-      const styles = {
-        info: 'bg-slate-900 text-white border-slate-700',
-        success: 'bg-emerald-700 text-white border-emerald-600',
-        warn: 'bg-amber-600 text-white border-amber-500',
-        error: 'bg-rose-700 text-white border-rose-600',
+    // =========================================================================
+    // استدعاءات Supabase REST و RPC
+    // =========================================================================
+    async function sbRest(path, options = {}) {
+      const headers = {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+        ...(options.headers || {})
       };
-      const el = document.createElement('div');
-      el.className = `pointer-events-auto rounded-2xl border px-4 py-2.5 text-xs sm:text-sm font-bold shadow-lg animate-fade-in ${styles[type] || styles.info}`;
-      el.textContent = message;
-      container.appendChild(el);
-      setTimeout(() => {
-        el.remove();
-      }, 3200);
+      const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
+        ...options,
+        headers
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || `HTTP ${res.status}`);
+      }
+      if (res.status === 204) return null;
+      const text = await res.text();
+      return text ? JSON.parse(text) : null;
     }
 
-    function getGradeLabel(gradeId) {
-      if (gradeId === 'GENERAL') return 'تعميم عام';
-      const found = GRADES.find((g) => g.id === String(gradeId));
-      return found ? `الصف ${found.label}` : `الصف ${gradeId}`;
+    async function sbRpc(fnName, params = {}) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fnName}`, {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(params)
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || `RPC ${fnName} failed`);
+      }
+      const text = await res.text();
+      return text ? JSON.parse(text) : null;
     }
 
-    function formatTargetLabel(post) {
-      if (post.grade === 'GENERAL') return 'تعميم عام';
-      const gLabel = getGradeLabel(post.grade);
-      return post.section ? `${gLabel} — شعبة (${post.section})` : gLabel;
-    }
-
-    function formatDateTime(iso) {
+    // تنظيف التبليغات اليومية التي مرّ عليها أكثر من 7 أيام (مع استثناء GENERAL)
+    async function cleanupExpiredDailyPosts() {
+      const cutoffIso = new Date(Date.now() - DAILY_RETENTION_MS).toISOString();
       try {
-        const d = new Date(iso);
-        if (Number.isNaN(d.getTime())) return '';
-        return d.toLocaleString('ar-IQ', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        });
-      } catch {
-        return '';
+        await sbRest(
+          `/announcements?grade=neq.GENERAL&created_at=lt.${encodeURIComponent(cutoffIso)}`,
+          { method: "DELETE", headers: { "Prefer": "return=minimal" } }
+        );
+      } catch (_) {
+        // إذا كانت سياسة الحذف لـ anon غير مفعلة في قاعدة البيانات، سيستبعدها filterActivePosts تلقائياً
       }
     }
 
-    function getActiveSupabaseConfig() {
-      let override = null;
+    async function fetchPostsAndComments() {
+      const [postsData, commentsData] = await Promise.all([
+        sbRest("/announcements?select=*&order=created_at.desc"),
+        sbRest("/announcement_comments?select=*&order=created_at.asc")
+      ]);
+
+      state.posts = filterActivePosts(postsData || []);
+
+      const validPostIds = new Set(state.posts.map((p) => p.id));
+      const grouped = {};
+      for (const c of (commentsData || [])) {
+        if (!validPostIds.has(c.announcement_id)) continue;
+        if (!grouped[c.announcement_id]) grouped[c.announcement_id] = [];
+        grouped[c.announcement_id].push(c);
+      }
+      state.commentsByPost = grouped;
+    }
+
+    async function loadAccountsListForLogin() {
       try {
-        const raw = localStorage.getItem(SUPABASE_OVERRIDE_KEY);
-        if (raw) override = JSON.parse(raw);
+        const data = await sbRpc("list_teacher_accounts_public");
+        if (Array.isArray(data) && data.length > 0) {
+          state.teacherAccounts = data.map((row) => ({
+            id: row.id,
+            teacher_name: row.teacher_name,
+            subject: row.subject || "",
+            is_admin: Boolean(row.is_admin),
+            active: row.active !== false
+          }));
+        }
+      } catch (_) {
+        // استخدام القائمة الاحتياطية في حال عدم وجود الدالة العامة
+      }
+      populateLoginSelect();
+    }
+
+    // =========================================================================
+    // إدارة الجلسة وقفل الخمول التلقائي (30 دقيقة)
+    // =========================================================================
+    function resetIdleTimer() {
+      if (!state.session) return;
+      state.session.expiresAt = Date.now() + SESSION_IDLE_MS;
+      clearTimeout(state.idleTimer);
+      state.idleTimer = setTimeout(() => {
+        handleLogout("انتهت الجلسة تلقائياً بعد 30 دقيقة من عدم النشاط.");
+      }, SESSION_IDLE_MS);
+      updateSessionTimerText();
+    }
+
+    function updateSessionTimerText() {
+      const el = document.getElementById("sessionTimerText");
+      if (!el || !state.session) return;
+      const remMs = Math.max(0, state.session.expiresAt - Date.now());
+      const mins = Math.ceil(remMs / 60000);
+      el.textContent = `الجلسة نشطة • قفل تلقائي خلال ${mins} دقيقة من الخمول`;
+    }
+
+    function startSession(userObj) {
+      state.session = {
+        id: userObj.id,
+        name: userObj.teacher_name || userObj.name || userObj.id,
+        subject: userObj.subject || "",
+        isAdmin: Boolean(userObj.is_admin || userObj.isAdmin),
+        expiresAt: Date.now() + SESSION_IDLE_MS
+      };
+
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("dashboardArea").classList.remove("hidden");
+
+      document.getElementById("sessionUserTitle").textContent = `مرحباً، ${state.session.name}`;
+      const roleBadge = document.getElementById("sessionRoleBadge");
+      roleBadge.textContent = state.session.isAdmin ? "الإدارة" : (state.session.subject || "مدرس");
+      roleBadge.className = state.session.isAdmin ? "badge badge-general" : "badge badge-subject";
+
+      const subjInput = document.getElementById("postSubjectInput");
+      if (!state.session.isAdmin && state.session.subject) {
+        subjInput.value = state.session.subject;
+      } else if (state.session.isAdmin) {
+        subjInput.value = "";
+      }
+
+      document.getElementById("adminPanelCard").classList.toggle("hidden", !state.session.isAdmin);
+
+      clearInterval(state.countdownTimer);
+      state.countdownTimer = setInterval(updateSessionTimerText, 15000);
+      resetIdleTimer();
+
+      renderTeacherPosts();
+      if (state.session.isAdmin) {
+        loadAdminTeachersTable();
+      }
+    }
+
+    function handleLogout(message = "") {
+      state.session = null;
+      clearTimeout(state.idleTimer);
+      clearInterval(state.countdownTimer);
+
+      document.getElementById("dashboardArea").classList.add("hidden");
+      document.getElementById("adminPanelCard").classList.add("hidden");
+      document.getElementById("loginCard").classList.remove("hidden");
+      document.getElementById("loginPinInput").value = "";
+
+      const fb = document.getElementById("loginFeedback");
+      fb.innerHTML = message ? `<div class="alert alert-info">${escapeHtml(message)}</div>` : "";
+    }
+
+    async function handleLogin() {
+      const accountId = document.getElementById("loginAccountSelect").value;
+      const pin = document.getElementById("loginPinInput").value.trim();
+      const fb = document.getElementById("loginFeedback");
+      const btn = document.getElementById("loginBtn");
+
+      if (!pin) {
+        fb.innerHTML = `<div class="alert alert-danger">يرجى إدخال الرمز السري.</div>`;
+        return;
+      }
+
+      btn.disabled = true;
+      fb.innerHTML = "";
+
+      try {
+        let authenticated = null;
+        try {
+          const res = await sbRpc("verify_teacher_pin", { p_id: accountId, p_pin: pin });
+          const row = Array.isArray(res) ? res[0] : res;
+          if (row && row.id) {
+            authenticated = row;
+          }
+        } catch (_) {
+          // التحقق الاحتياطي من الحساب المحلي إذا لم تتوفر الدالة
+          const localMatch = state.teacherAccounts.find(
+            (acc) => acc.id === accountId && String(acc.pin || "") === pin && acc.active !== false
+          );
+          if (localMatch) authenticated = localMatch;
+        }
+
+        if (!authenticated) {
+          fb.innerHTML = `<div class="alert alert-danger">الرمز السري غير صحيح أو الحساب غير نشط.</div>`;
+          return;
+        }
+
+        startSession(authenticated);
       } catch (err) {
-        console.error(err);
+        fb.innerHTML = `<div class="alert alert-danger">تعذر التحقق من الدخول: ${escapeHtml(err.message)}</div>`;
+      } finally {
+        btn.disabled = false;
       }
-
-      const url = (
-        (override && override.SUPABASE_URL) ||
-        SUPABASE_CONFIG.SUPABASE_URL ||
-        ''
-      ).trim();
-
-      const key = (
-        (override && override.SUPABASE_ANON_KEY) ||
-        SUPABASE_CONFIG.SUPABASE_ANON_KEY ||
-        ''
-      ).trim();
-
-      return {
-        SUPABASE_URL: url,
-        SUPABASE_ANON_KEY: key,
-        TABLE_NAME: SUPABASE_CONFIG.TABLE_NAME || 'announcements',
-        COMMENTS_TABLE_NAME: SUPABASE_CONFIG.COMMENTS_TABLE_NAME || 'announcement_comments',
-      };
     }
 
-    function isSupabaseConfigured() {
-      const cfg = getActiveSupabaseConfig();
-      return Boolean(
-        cfg.SUPABASE_URL &&
-        cfg.SUPABASE_URL.startsWith('http') &&
-        cfg.SUPABASE_ANON_KEY &&
-        cfg.SUPABASE_ANON_KEY.length > 10
+    // =========================================================================
+    // التنقل بين واجهة ولي الأمر وواجهة المدرس والإدارة
+    // =========================================================================
+    function switchMode(mode) {
+      state.mode = mode;
+      document.getElementById("tabParent").classList.toggle("active", mode === "parent");
+      document.getElementById("tabTeacher").classList.toggle("active", mode === "teacher");
+      document.getElementById("parentView").classList.toggle("hidden", mode !== "parent");
+      document.getElementById("teacherView").classList.toggle("hidden", mode !== "teacher");
+
+      if (mode === "parent") {
+        renderParentView();
+      } else if (state.session) {
+        resetIdleTimer();
+        renderTeacherPosts();
+      }
+    }
+
+    // =========================================================================
+    // بناء عناصر الاختيار (الصفوف، الشعب، الحسابات)
+    // =========================================================================
+    function renderChipsGroup(containerId, items, activeValue, onSelect) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      items.forEach((item) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `chip ${item.value === activeValue ? "active" : ""}`;
+        btn.textContent = item.label;
+        btn.onclick = () => onSelect(item.value);
+        container.appendChild(btn);
+      });
+    }
+
+    function renderParentControls() {
+      renderChipsGroup(
+        "parentGradeChips",
+        GRADES.map((g) => ({ value: g, label: `الصف ${g}` })),
+        state.parentGrade,
+        (val) => {
+          state.parentGrade = val;
+          renderParentView();
+        }
+      );
+
+      renderChipsGroup(
+        "parentSectionChips",
+        SECTIONS.map((s) => ({ value: s, label: `شعبة ${s}` })),
+        state.parentSection,
+        (val) => {
+          state.parentSection = val;
+          renderParentView();
+        }
       );
     }
 
-    function getSupabaseHeaders() {
-      const cfg = getActiveSupabaseConfig();
-      return {
-        apikey: cfg.SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${cfg.SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-      };
-    }
-
-    function getSupabaseTableEndpoint(tableName, query = '') {
-      const cfg = getActiveSupabaseConfig();
-      const base = cfg.SUPABASE_URL.replace(/\/+$/, '');
-      return `${base}/rest/v1/${tableName}${query}`;
-    }
-
-    function getSupabaseRpcEndpoint(fnName) {
-      const cfg = getActiveSupabaseConfig();
-      const base = cfg.SUPABASE_URL.replace(/\/+$/, '');
-      return `${base}/rest/v1/rpc/${fnName}`;
-    }
-
-    // ==================== إدارة الجلسة والقفل التلقائي بعد 30 دقيقة ====================
-    function clearIdleTimer() {
-      if (idleTimerId) {
-        clearTimeout(idleTimerId);
-        idleTimerId = null;
-      }
-    }
-
-    function saveTeacherSession(sessionObj) {
-      state.teacherSession = sessionObj;
-      try {
-        sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify(sessionObj));
-      } catch (err) {
-        console.error(err);
-      }
-      scheduleIdleAutoLock();
-    }
-
-    function clearTeacherSession() {
-      state.teacherSession = null;
-      state.adminTeachers = [];
-      clearIdleTimer();
-      try {
-        sessionStorage.removeItem(TEACHER_SESSION_KEY);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    function scheduleIdleAutoLock() {
-      clearIdleTimer();
-      if (!state.teacherSession) return;
-      idleTimerId = setTimeout(() => {
-        if (!state.teacherSession) return;
-        clearTeacherSession();
-        showToast('تم قفل وضع المدرس تلقائياً بعد 30 دقيقة من الخمول.', 'info');
-        if (state.mode === 'teacher') {
-          switchMode('parent', true);
-        }
-      }, SESSION_TIMEOUT_MS);
-    }
-
-    function touchTeacherActivity() {
-      if (!state.teacherSession) return;
-      const now = Date.now();
-      if (now - (state.teacherSession.lastActivity || 0) >= SESSION_TIMEOUT_MS) {
-        clearTeacherSession();
-        showToast('انتهت مهلة الجلسة (30 دقيقة)؛ يرجى إدخال الرمز مجدداً.', 'warn');
-        if (state.mode === 'teacher') {
-          switchMode('parent', true);
-        }
-        return;
-      }
-      state.teacherSession.lastActivity = now;
-      try {
-        sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify(state.teacherSession));
-      } catch (err) {
-        console.error(err);
-      }
-      scheduleIdleAutoLock();
-    }
-
-    function loadSavedTeacherSession() {
-      try {
-        const raw = sessionStorage.getItem(TEACHER_SESSION_KEY);
-        if (!raw) return;
-        const parsed = JSON.parse(raw);
-        if (!parsed || !parsed.pin) return;
-        if (Date.now() - (parsed.lastActivity || 0) >= SESSION_TIMEOUT_MS) {
-          sessionStorage.removeItem(TEACHER_SESSION_KEY);
-          return;
-        }
-        parsed.lastActivity = Date.now();
-        state.teacherSession = parsed;
-        sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify(parsed));
-        scheduleIdleAutoLock();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    function openTeacherPinModal() {
-      const modal = document.getElementById('teacher-pin-modal');
-      const input = document.getElementById('teacher-pin-input');
-      if (input) input.value = '';
-      modal?.classList.remove('hidden');
-      modal?.classList.add('flex');
-      setTimeout(() => input?.focus(), 60);
-    }
-
-    function closeTeacherPinModal(returnToParent = false) {
-      const modal = document.getElementById('teacher-pin-modal');
-      modal?.classList.add('hidden');
-      modal?.classList.remove('flex');
-      if (returnToParent && !state.teacherSession) {
-        switchMode('parent', true);
-      }
-    }
-
-    function lockTeacherSession() {
-      clearTeacherSession();
-      showToast('تم قفل وضع المدرس.', 'info');
-      switchMode('parent', true);
-    }
-
-    async function verifyPinWithSupabase(pin) {
-      if (!isSupabaseConfigured()) {
-        return {
-          pin,
-          id: 'local-teacher',
-          teacherName: 'مدرس المادة',
-          subject: 'واجب يومي',
-          isAdmin: true,
-        };
-      }
-      const res = await fetch(getSupabaseRpcEndpoint('login_teacher_by_pin'), {
-        method: 'POST',
-        headers: getSupabaseHeaders(),
-        body: JSON.stringify({ p_pin: pin }),
-      });
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      if (!data || !data.id) return null;
-      return {
-        pin,
-        id: String(data.id),
-        teacherName: data.teacher_name || 'مدرس',
-        subject: data.subject || '',
-        isAdmin: Boolean(data.is_admin),
-        lastActivity: Date.now(),
-      };
-    }
-
-    async function handleTeacherPinSubmit(event) {
-      event.preventDefault();
-      const input = document.getElementById('teacher-pin-input');
-      const btn = document.getElementById('verify-pin-btn');
-      const pin = (input?.value || '').trim();
-      if (!pin) {
-        showToast('أدخل الرمز السري أولاً.', 'warn');
-        return;
-      }
-
-      if (btn) btn.disabled = true;
-      try {
-        const sessionObj = await verifyPinWithSupabase(pin);
-        if (!sessionObj) {
-          showToast('الرمز السري غير صحيح أو الحساب غير نشط.', 'error');
-          input?.select();
-          return;
-        }
-        saveTeacherSession(sessionObj);
-        closeTeacherPinModal(false);
-        activateTeacherView();
-        showToast(`مرحباً ${sessionObj.teacherName}`, 'success');
-      } catch (err) {
-        console.error('PIN login error:', err);
-        showToast('تعذّر التحقق من الرمز؛ تأكد من الاتصال بـ Supabase.', 'error');
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    }
-
-    function canManagePost(post) {
-      if (!state.teacherSession) return false;
-      if (state.teacherSession.isAdmin) return true;
-      if (post.teacherId && state.teacherSession.id === post.teacherId) return true;
-      return false;
-    }
-
-    function renderTeacherIdentityBanner() {
-      const badge = document.getElementById('active-teacher-badge');
-      const rolePill = document.getElementById('active-teacher-role-pill');
-      const subjLabel = document.getElementById('default-subject-label');
-      const adminPanel = document.getElementById('admin-teachers-panel');
-
-      if (!state.teacherSession) {
-        adminPanel?.classList.add('hidden');
-        return;
-      }
-
-      if (badge) {
-        badge.textContent = `${state.teacherSession.teacherName}${state.teacherSession.subject ? ` — ${state.teacherSession.subject}` : ''}`;
-      }
-      if (rolePill) {
-        rolePill.textContent = state.teacherSession.isAdmin ? 'صلاحية الإدارة الكاملة' : 'حساب مدرس فردي';
-        rolePill.className = state.teacherSession.isAdmin
-          ? 'px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-extrabold text-xs'
-          : 'px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs';
-      }
-      if (subjLabel) {
-        subjLabel.textContent = state.teacherSession.subject || 'غير محددة';
-      }
-
-      if (state.teacherSession.isAdmin && isSupabaseConfigured()) {
-        adminPanel?.classList.remove('hidden');
-        loadAdminTeachersList();
-      } else {
-        adminPanel?.classList.add('hidden');
-      }
-    }
-
-    // ==================== إدارة جدول المدرسين والرموز للمدير ====================
-    async function loadAdminTeachersList() {
-      if (!state.teacherSession?.isAdmin || !isSupabaseConfigured()) return;
-      try {
-        const res = await fetch(getSupabaseRpcEndpoint('admin_list_teachers'), {
-          method: 'POST',
-          headers: getSupabaseHeaders(),
-          body: JSON.stringify({ p_pin: state.teacherSession.pin }),
-        });
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-        const rows = await res.json();
-        state.adminTeachers = Array.isArray(rows) ? rows : [];
-        renderAdminTeachersTable();
-      } catch (err) {
-        console.error('Load admin teachers error:', err);
-        showToast('تعذّر جلب قائمة المدرسين.', 'error');
-      }
-    }
-
-    function renderAdminTeachersTable() {
-      const tbody = document.getElementById('admin-teachers-tbody');
-      if (!tbody) return;
-      if (!state.adminTeachers.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-slate-400 font-bold">لا توجد سجلات.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = state.adminTeachers
-        .map(
-          (t) => `
-          <tr class="hover:bg-slate-50/80">
-            <td class="py-2 px-3 font-mono font-bold text-slate-700">${escapeHtml(t.id)}</td>
-            <td class="py-2 px-3 font-bold text-slate-900">${escapeHtml(t.teacher_name)}</td>
-            <td class="py-2 px-3 text-slate-700">${escapeHtml(t.subject || '')}</td>
-            <td class="py-2 px-3 font-mono font-extrabold text-brand-800">${escapeHtml(t.pin)}</td>
-            <td class="py-2 px-3">
-              <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                t.active ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-800'
-              }">
-                ${t.active ? 'نشط' : 'متوقف'}
-              </span>
-            </td>
-            <td class="py-2 px-3">
-              <button
-                type="button"
-                onclick="fillAdminTeacherForm('${escapeHtml(t.id)}')"
-                class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-brand-50 hover:bg-brand-100 text-brand-900 border border-brand-200 cursor-pointer"
-              >
-                تعديل
-              </button>
-            </td>
-          </tr>`
-        )
-        .join('');
-    }
-
-    function fillAdminTeacherForm(id) {
-      const found = state.adminTeachers.find((t) => t.id === id);
-      if (!found) return;
-      document.getElementById('admin-t-id').value = found.id || '';
-      document.getElementById('admin-t-name').value = found.teacher_name || '';
-      document.getElementById('admin-t-subject').value = found.subject || '';
-      document.getElementById('admin-t-pin').value = found.pin || '';
-      document.getElementById('admin-t-active').checked = Boolean(found.active);
-      document.getElementById('admin-t-is-admin').checked = Boolean(found.is_admin);
-      document.getElementById('admin-t-name')?.focus();
-    }
-
-    function clearAdminTeacherForm() {
-      document.getElementById('admin-t-id').value = '';
-      document.getElementById('admin-t-name').value = '';
-      document.getElementById('admin-t-subject').value = '';
-      document.getElementById('admin-t-pin').value = '';
-      document.getElementById('admin-t-active').checked = true;
-      document.getElementById('admin-t-is-admin').checked = false;
-    }
-
-    async function handleAdminSaveTeacher(event) {
-      event.preventDefault();
-      if (!state.teacherSession?.isAdmin || !isSupabaseConfigured()) return;
-
-      const id = (document.getElementById('admin-t-id')?.value || '').trim();
-      const teacherName = (document.getElementById('admin-t-name')?.value || '').trim();
-      const subject = (document.getElementById('admin-t-subject')?.value || '').trim();
-      const newPin = (document.getElementById('admin-t-pin')?.value || '').trim();
-      const active = Boolean(document.getElementById('admin-t-active')?.checked);
-      const isAdmin = Boolean(document.getElementById('admin-t-is-admin')?.checked);
-
-      if (!id || !teacherName || !newPin) {
-        showToast('أدخل المعرّف والاسم والرمز السري.', 'warn');
-        return;
-      }
-
-      const btn = document.getElementById('admin-save-teacher-btn');
-      if (btn) btn.disabled = true;
-
-      try {
-        const res = await fetch(getSupabaseRpcEndpoint('admin_upsert_teacher'), {
-          method: 'POST',
-          headers: getSupabaseHeaders(),
-          body: JSON.stringify({
-            p_pin: state.teacherSession.pin,
-            p_id: id,
-            p_teacher_name: teacherName,
-            p_subject: subject,
-            p_new_pin: newPin,
-            p_is_admin: isAdmin,
-            p_active: active,
-          }),
-        });
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-        showToast('تم حفظ بيانات المدرس بنجاح.', 'success');
-        await loadAdminTeachersList();
-      } catch (err) {
-        console.error('Upsert teacher error:', err);
-        showToast('تعذّر حفظ السجل؛ تأكد من عدم تكرار الرمز السري مع حساب آخر.', 'error');
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    }
-
-    // ==================== إعدادات المؤشرات والمنشورات والتعليقات ====================
-    function updateConnectionIndicators() {
-      const banner = document.getElementById('parent-local-banner');
-      const pill = document.getElementById('connection-status-pill');
-      const badge = document.getElementById('db-mode-badge');
-      const configured = isSupabaseConfigured();
-
-      if (!configured) {
-        banner?.classList.remove('hidden');
-        if (pill) {
-          pill.textContent = 'الوضع المحلي (غير مربوط بـ Supabase)';
-          pill.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-200';
-        }
-        if (badge) badge.textContent = 'الحالة الحالية: وضع محلي فقط';
-      } else {
-        banner?.classList.add('hidden');
-        if (pill) {
-          pill.textContent = state.cloudConnected ? 'متصل بـ Supabase (مزامنة نشطة)' : 'مربوط بـ Supabase';
-          pill.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-200';
-        }
-        if (badge) {
-          badge.textContent = state.cloudConnected
-            ? 'الحالة الحالية: متصل بقاعدة البيانات Supabase'
-            : 'الحالة الحالية: إعدادات Supabase مفعّلة';
-        }
-      }
-    }
-
-    function normalizeRowToPost(row) {
-      return {
-        id: String(row.id),
-        grade: row.grade || 'GENERAL',
-        section: row.section || '',
-        teacherId: row.teacher_id ?? row.teacherId ?? '',
-        teacherName: row.teacher_name ?? row.teacherName ?? '',
-        subject: row.subject || '',
-        message: row.message || '',
-        attachment: row.attachment || null,
-        commentsClosed: Boolean(row.comments_closed ?? row.commentsClosed ?? false),
-        createdAt: row.created_at ?? row.createdAt ?? new Date().toISOString(),
-      };
-    }
-
-    function serializePostToRow(post) {
-      return {
-        id: post.id,
-        grade: post.grade,
-        section: post.section || '',
-        teacher_name: post.teacherName || '',
-        subject: post.subject || '',
-        message: post.message,
-        attachment: post.attachment || null,
-        created_at: post.createdAt,
-      };
-    }
-
-    function normalizeRowToComment(row) {
-      return {
-        id: String(row.id),
-        announcementId: String(row.announcement_id ?? row.announcementId),
-        authorName: row.author_name ?? row.authorName ?? 'ولي أمر',
-        isTeacher: Boolean(row.is_teacher ?? row.isTeacher ?? false),
-        message: row.message || '',
-        createdAt: row.created_at ?? row.createdAt ?? new Date().toISOString(),
-      };
-    }
-
-    function createInitialPosts() {
-      const items = [
-        {
-          id: 'gen-1',
-          grade: 'GENERAL',
-          section: '',
-          teacherId: 'admin',
-          teacherName: 'إدارة المدرسة',
-          subject: 'تعميم عام',
-          message: 'أهلاً بكم في صفحة التواصل المدرسي للواجبات اليومية لادارة ثانوية المتفوقين الاولى للبنين. يُرجى إضافة الرابط إلى شاشة الهاتف لسهولة المتابعة.',
-          commentsClosed: false,
-          createdAt: '2026-11-25T08:00:00',
-          attachment: null,
-        },
-        {
-          id: 'gen-2',
-          grade: 'GENERAL',
-          section: '',
-          teacherId: 'admin',
-          teacherName: 'إدارة المدرسة',
-          subject: 'تعميم عام',
-          message: 'يرجى متابعة دفاتر الطلاب يومياً والالتزام بالحضور والمستلزمات المدرسية.',
-          commentsClosed: false,
-          createdAt: '2026-11-24T09:00:00',
-          attachment: null,
-        },
+    function renderTeacherPostControls() {
+      const gradeOptions = [
+        ...GRADES.map((g) => ({ value: g, label: `الصف ${g}` })),
+        { value: "GENERAL", label: "تعميم عام (لكل الصفوف)" }
       ];
 
-      let idx = 1;
-      GRADES.forEach((g) => {
-        ['أ', 'ب'].forEach((sec) => {
-          items.push({
-            id: `post-${idx++}`,
-            grade: g.id,
-            section: sec,
-            teacherId: '',
-            teacherName: 'مدرس المادة',
-            subject: 'واجب يومي',
-            message: `متابعة الدرس اليومي للصف ${g.label} — شعبة (${sec}) وحل التمارين المطلوبة في الدفتر.`,
-            commentsClosed: false,
-            createdAt: '2026-11-25T10:00:00',
-            attachment: null,
-          });
+      renderChipsGroup(
+        "postGradeChips",
+        gradeOptions,
+        state.postGrade,
+        (val) => {
+          state.postGrade = val;
+          document.getElementById("postSectionWrapper").classList.toggle("hidden", val === "GENERAL");
+          renderTeacherPostControls();
+        }
+      );
+
+      renderChipsGroup(
+        "postSectionChips",
+        SECTIONS.map((s) => ({ value: s, label: `شعبة ${s}` })),
+        state.postSection,
+        (val) => {
+          state.postSection = val;
+          renderTeacherPostControls();
+        }
+      );
+    }
+
+    function populateLoginSelect() {
+      const select = document.getElementById("loginAccountSelect");
+      const currentVal = select.value;
+      select.innerHTML = "";
+
+      state.teacherAccounts
+        .filter((acc) => acc.active !== false)
+        .forEach((acc) => {
+          const opt = document.createElement("option");
+          opt.value = acc.id;
+          opt.textContent = acc.is_admin
+            ? `${acc.teacher_name} (${acc.id})`
+            : `${acc.teacher_name} — ${acc.subject || "مدرس"} (${acc.id})`;
+          select.appendChild(opt);
         });
-      });
 
-      return items;
-    }
-
-    function savePostsLocal() {
-      try {
-        localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(state.posts));
-      } catch (err) {
-        console.error(err);
+      if (currentVal && [...select.options].some((o) => o.value === currentVal)) {
+        select.value = currentVal;
       }
     }
 
-    function saveCommentsLocal() {
-      try {
-        localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(state.commentsByPost));
-      } catch (err) {
-        console.error(err);
-      }
+    // =========================================================================
+    // صلاحيات إدارة التبليغات والتعليقات
+    // =========================================================================
+    function canManagePost(post) {
+      if (!state.session || !post) return false;
+      if (state.session.isAdmin) return true;
+      return post.teacher_id === state.session.id;
     }
 
-    function groupCommentsList(rows) {
-      const map = {};
-      (rows || []).forEach((r) => {
-        const c = normalizeRowToComment(r);
-        if (!map[c.announcementId]) map[c.announcementId] = [];
-        map[c.announcementId].push(c);
-      });
-      Object.keys(map).forEach((k) => {
-        map[k].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      });
-      return map;
-    }
-
-    async function loadCommentsFromSource() {
-      const cfg = getActiveSupabaseConfig();
-      if (isSupabaseConfigured()) {
-        try {
-          const res = await fetch(
-            getSupabaseTableEndpoint(cfg.COMMENTS_TABLE_NAME, '?select=*&order=created_at.asc'),
-            {
-              method: 'GET',
-              headers: getSupabaseHeaders(),
-            }
-          );
-          if (res.ok) {
-            const rows = await res.json();
-            state.commentsByPost = groupCommentsList(rows);
-            saveCommentsLocal();
-            return;
-          }
-        } catch (err) {
-          console.error('Comments fetch error:', err);
-        }
-      }
-
-      try {
-        const raw = localStorage.getItem(COMMENTS_STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && typeof parsed === 'object') state.commentsByPost = parsed;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function loadPostsFromSource() {
-      const cfg = getActiveSupabaseConfig();
-      if (isSupabaseConfigured()) {
-        try {
-          const res = await fetch(getSupabaseTableEndpoint(cfg.TABLE_NAME, '?select=*&order=created_at.desc'), {
-            method: 'GET',
-            headers: getSupabaseHeaders(),
-          });
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
-          }
-          const rows = await res.json();
-          state.posts = Array.isArray(rows) ? rows.map(normalizeRowToPost) : [];
-          state.cloudConnected = true;
-          savePostsLocal();
-          await loadCommentsFromSource();
-          updateConnectionIndicators();
-          return;
-        } catch (err) {
-          console.error('Supabase fetch error, falling back to localStorage:', err);
-          state.cloudConnected = false;
-          showToast('تعذّر الاتصال بـ Supabase؛ تم عرض النسخة المحلية.', 'warn');
-        }
-      } else {
-        state.cloudConnected = false;
-      }
-
-      try {
-        const rawPosts = localStorage.getItem(POSTS_STORAGE_KEY);
-        if (rawPosts) {
-          const parsed = JSON.parse(rawPosts);
-          state.posts = Array.isArray(parsed) ? parsed : createInitialPosts();
-        } else {
-          state.posts = createInitialPosts();
-          savePostsLocal();
-        }
-      } catch (err) {
-        console.error(err);
-        state.posts = createInitialPosts();
-      }
-
-      await loadCommentsFromSource();
-      updateConnectionIndicators();
-    }
-
-    async function refreshPostsManual() {
-      await loadPostsFromSource();
-      renderParentView();
-      renderManageList();
-      showToast('تم تحديث التبليغات والتعليقات.', 'info');
-    }
-
-    async function persistNewPost(post) {
-      if (isSupabaseConfigured()) {
-        try {
-          const res = await fetch(getSupabaseRpcEndpoint('add_announcement_secure'), {
-            method: 'POST',
-            headers: getSupabaseHeaders(),
-            body: JSON.stringify({
-              p_pin: state.teacherSession?.pin || '',
-              p_payload: serializePostToRow(post),
-            }),
-          });
-          if (!res.ok) {
-            const errText = await res.text();
-            if (errText.includes('INVALID_TEACHER_PIN') || res.status === 401 || res.status === 403) {
-              clearTeacherSession();
-              showToast('انتهت صلاحية الرمز السري؛ يرجى إدخاله مجدداً.', 'warn');
-              openTeacherPinModal();
-              return false;
-            }
-            throw new Error(`HTTP ${res.status}`);
-          }
-          const insertedRow = await res.json();
-          const normalized = insertedRow && typeof insertedRow === 'object'
-            ? normalizeRowToPost(insertedRow)
-            : post;
-          state.posts = [normalized, ...state.posts.filter((x) => x.id !== normalized.id)];
-          savePostsLocal();
-          state.cloudConnected = true;
-          updateConnectionIndicators();
-          return true;
-        } catch (err) {
-          console.error('Supabase secure insert error:', err);
-          state.cloudConnected = false;
-          updateConnectionIndicators();
-          showToast('تعذّر الإرسال إلى Supabase؛ تحقق من الاتصال والرمز السري.', 'error');
-          return false;
-        }
-      }
-
-      state.posts.unshift(post);
-      savePostsLocal();
-      return true;
-    }
-
-    async function removePostById(postId) {
-      if (isSupabaseConfigured()) {
-        try {
-          const res = await fetch(getSupabaseRpcEndpoint('delete_announcement_secure'), {
-            method: 'POST',
-            headers: getSupabaseHeaders(),
-            body: JSON.stringify({
-              p_pin: state.teacherSession?.pin || '',
-              p_id: String(postId),
-            }),
-          });
-          if (!res.ok) {
-            const errText = await res.text();
-            if (errText.includes('INVALID_TEACHER_PIN') || res.status === 401 || res.status === 403) {
-              clearTeacherSession();
-              showToast('انتهت صلاحية الرمز السري؛ يرجى إدخاله مجدداً.', 'warn');
-              openTeacherPinModal();
-              return false;
-            }
-            throw new Error(`HTTP ${res.status}`);
-          }
-          const deletedOk = await res.json();
-          if (deletedOk === false) {
-            showToast('لا تملك صلاحية حذف هذا التبليغ؛ يُسمح لصاحبه أو الإدارة فقط.', 'warn');
-            return false;
-          }
-          state.posts = state.posts.filter((x) => x.id !== postId);
-          delete state.commentsByPost[postId];
-          savePostsLocal();
-          saveCommentsLocal();
-          state.cloudConnected = true;
-          updateConnectionIndicators();
-          return true;
-        } catch (err) {
-          console.error('Supabase secure delete error:', err);
-          state.cloudConnected = false;
-          updateConnectionIndicators();
-          showToast('تعذّر الحذف من Supabase.', 'error');
-          return false;
-        }
-      }
-
-      state.posts = state.posts.filter((x) => x.id !== postId);
-      delete state.commentsByPost[postId];
-      savePostsLocal();
-      saveCommentsLocal();
-      return true;
-    }
-
-    // ==================== نظام التعليقات والاستفسارات القصيرة ====================
-    function toggleCommentDrawer(postId) {
-      state.openCommentPostIds[postId] = !state.openCommentPostIds[postId];
-      renderParentView();
-    }
-
-    async function handleAddComment(event, postId) {
-      event.preventDefault();
-      const post = state.posts.find((p) => p.id === postId);
-      if (!post) return;
-
-      const authorInput = document.getElementById(`comment-author-${postId}`);
-      const msgInput = document.getElementById(`comment-msg-${postId}`);
-      const message = (msgInput?.value || '').trim();
-
-      if (!message) {
-        showToast('اكتب نص الاستفسار أو التعليق أولاً.', 'warn');
-        return;
-      }
-      if (message.length > 250) {
-        showToast('الحد الأقصى للتعليق القصير 250 حرفاً.', 'warn');
-        return;
-      }
-
-      const commentId = `cmt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      const cfg = getActiveSupabaseConfig();
-
-      if (state.teacherSession && isSupabaseConfigured()) {
-        try {
-          const res = await fetch(getSupabaseRpcEndpoint('add_teacher_comment_secure'), {
-            method: 'POST',
-            headers: getSupabaseHeaders(),
-            body: JSON.stringify({
-              p_pin: state.teacherSession.pin,
-              p_id: commentId,
-              p_announcement_id: postId,
-              p_message: message,
-            }),
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const row = await res.json();
-          const created = normalizeRowToComment(row);
-          if (!state.commentsByPost[postId]) state.commentsByPost[postId] = [];
-          state.commentsByPost[postId].push(created);
-          saveCommentsLocal();
-          if (msgInput) msgInput.value = '';
-          state.openCommentPostIds[postId] = true;
-          renderParentView();
-          showToast('تم إضافة رد المدرس.', 'success');
-          return;
-        } catch (err) {
-          console.error('Teacher comment error:', err);
-          showToast('تعذّر إرسال رد المدرس.', 'error');
-          return;
-        }
-      }
-
-      if (post.commentsClosed) {
-        showToast('التعليقات مغلقة على هذا التبليغ.', 'warn');
-        return;
-      }
-
-      const studentName = (authorInput?.value || '').trim() || 'ولي أمر';
-      const newComment = {
-        id: commentId,
-        announcementId: postId,
-        authorName: studentName,
-        isTeacher: false,
-        message,
-        createdAt: new Date().toISOString(),
-      };
-
-      if (isSupabaseConfigured()) {
-        try {
-          const res = await fetch(getSupabaseTableEndpoint(cfg.COMMENTS_TABLE_NAME), {
-            method: 'POST',
-            headers: getSupabaseHeaders(),
-            body: JSON.stringify({
-              id: newComment.id,
-              announcement_id: newComment.announcementId,
-              author_name: newComment.authorName,
-              is_teacher: false,
-              message: newComment.message,
-              created_at: newComment.createdAt,
-            }),
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        } catch (err) {
-          console.error('Parent comment insert error:', err);
-          showToast('تعذّر إرسال التعليق؛ قد تكون التعليقات مغلقة.', 'error');
-          return;
-        }
-      }
-
-      if (!state.commentsByPost[postId]) state.commentsByPost[postId] = [];
-      state.commentsByPost[postId].push(newComment);
-      saveCommentsLocal();
-      if (msgInput) msgInput.value = '';
-      state.openCommentPostIds[postId] = true;
-      renderParentView();
-      showToast('تم إرسال استفسارك بنجاح.', 'success');
-    }
-
-    async function handleDeleteComment(postId, commentId) {
-      if (!state.teacherSession) {
-        openTeacherPinModal();
-        return;
-      }
-      if (isSupabaseConfigured()) {
-        try {
-          const res = await fetch(getSupabaseRpcEndpoint('delete_comment_secure'), {
-            method: 'POST',
-            headers: getSupabaseHeaders(),
-            body: JSON.stringify({
-              p_pin: state.teacherSession.pin,
-              p_comment_id: commentId,
-            }),
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const ok = await res.json();
-          if (!ok) {
-            showToast('لا تملك صلاحية حذف تعليقات هذا التبليغ.', 'warn');
-            return;
-          }
-        } catch (err) {
-          console.error('Delete comment error:', err);
-          showToast('تعذّر حذف التعليق.', 'error');
-          return;
-        }
-      }
-
-      state.commentsByPost[postId] = (state.commentsByPost[postId] || []).filter((c) => c.id !== commentId);
-      saveCommentsLocal();
-      renderParentView();
-      showToast('تم حذف التعليق.', 'info');
-    }
-
-    async function handleToggleCommentsClosed(postId) {
-      const post = state.posts.find((p) => p.id === postId);
-      if (!post) return;
-      if (!state.teacherSession) {
-        openTeacherPinModal();
-        return;
-      }
-      const nextClosed = !post.commentsClosed;
-
-      if (isSupabaseConfigured()) {
-        try {
-          const res = await fetch(getSupabaseRpcEndpoint('toggle_comments_closed_secure'), {
-            method: 'POST',
-            headers: getSupabaseHeaders(),
-            body: JSON.stringify({
-              p_pin: state.teacherSession.pin,
-              p_announcement_id: postId,
-              p_closed: nextClosed,
-            }),
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const ok = await res.json();
-          if (!ok) {
-            showToast('لا تملك صلاحية تعديل حالة التعليقات لهذا التبليغ.', 'warn');
-            return;
-          }
-        } catch (err) {
-          console.error('Toggle comments error:', err);
-          showToast('تعذّر تحديث حالة التعليقات.', 'error');
-          return;
-        }
-      }
-
-      post.commentsClosed = nextClosed;
-      savePostsLocal();
-      renderParentView();
-      renderManageList();
-      showToast(nextClosed ? 'تم إغلاق التعليقات على هذا التبليغ.' : 'تم فتح التعليقات على هذا التبليغ.', 'info');
-    }
-
-    // ==================== اختصارات ولي الأمر للشعب ====================
-    function loadSavedChildren() {
-      try {
-        const raw = localStorage.getItem(CHILDREN_STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) state.savedChildren = parsed;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-      renderSavedChildren();
-    }
-
-    function saveCurrentChildShortcut() {
-      const key = `${state.parentGrade}-${state.parentSection}`;
-      const label = `${getGradeLabel(state.parentGrade)} (${state.parentSection})`;
-      if (!state.savedChildren.some((c) => c.key === key)) {
-        state.savedChildren.push({
-          key,
-          grade: state.parentGrade,
-          section: state.parentSection,
-          label,
-        });
-        try {
-          localStorage.setItem(CHILDREN_STORAGE_KEY, JSON.stringify(state.savedChildren));
-        } catch (err) {
-          console.error(err);
-        }
-        renderSavedChildren();
-        showToast(`تم حفظ اختصار ${label}.`, 'success');
-      } else {
-        showToast('هذا الاختصار محفوظ مسبقاً.', 'info');
-      }
-    }
-
-    function removeChildShortcut(key) {
-      state.savedChildren = state.savedChildren.filter((c) => c.key !== key);
-      try {
-        localStorage.setItem(CHILDREN_STORAGE_KEY, JSON.stringify(state.savedChildren));
-      } catch (err) {
-        console.error(err);
-      }
-      renderSavedChildren();
-    }
-
-    function selectChildShortcut(grade, section) {
-      state.parentGrade = grade;
-      state.parentSection = section;
-      renderParentButtons();
-      renderParentView();
-    }
-
-    function renderSavedChildren() {
-      const wrap = document.getElementById('saved-children-list');
-      if (!wrap) return;
-      if (!state.savedChildren.length) {
-        wrap.innerHTML = '<span class="text-xs text-slate-400">لا توجد اختصارات محفوظة بعد</span>';
-        return;
-      }
-      wrap.innerHTML = state.savedChildren
-        .map(
-          (c) => `
-          <div class="inline-flex items-center rounded-xl bg-brand-50 border border-brand-200 overflow-hidden">
-            <button
-              type="button"
-              onclick="selectChildShortcut('${escapeHtml(c.grade)}', '${escapeHtml(c.section)}')"
-              class="px-2.5 py-1 text-xs font-extrabold text-brand-900 hover:bg-brand-100 cursor-pointer"
-            >
-              ${escapeHtml(c.label)}
-            </button>
-            <button
-              type="button"
-              onclick="removeChildShortcut('${escapeHtml(c.key)}')"
-              title="حذف الاختصار"
-              class="px-1.5 py-1 text-[11px] font-bold text-brand-700 hover:bg-rose-100 hover:text-rose-700 cursor-pointer"
-            >
-              ✕
-            </button>
-          </div>`
-        )
-        .join('');
-    }
-
-    // ==================== التبديل بين الواجهتين ====================
-    function activateTeacherView() {
-      state.mode = 'teacher';
-      const parentView = document.getElementById('parent-view');
-      const teacherView = document.getElementById('teacher-view');
-      const tabParent = document.getElementById('tab-parent');
-      const tabTeacher = document.getElementById('tab-teacher');
-
-      parentView?.classList.add('hidden');
-      teacherView?.classList.remove('hidden');
-      tabTeacher?.classList.add('bg-brand-700', 'text-white', 'shadow-xs');
-      tabTeacher?.classList.remove('text-slate-600');
-      tabParent?.classList.remove('bg-brand-700', 'text-white', 'shadow-xs');
-      tabParent?.classList.add('text-slate-600');
-
-      renderTeacherIdentityBanner();
-      renderTeacherButtons();
-      renderManageList();
-    }
-
-    function switchMode(mode, force = false) {
-      if (mode === 'teacher') {
-        touchTeacherActivity();
-        if (!force && isSupabaseConfigured() && !state.teacherSession) {
-          openTeacherPinModal();
-          return;
-        }
-        activateTeacherView();
-        return;
-      }
-
-      state.mode = 'parent';
-      const parentView = document.getElementById('parent-view');
-      const teacherView = document.getElementById('teacher-view');
-      const tabParent = document.getElementById('tab-parent');
-      const tabTeacher = document.getElementById('tab-teacher');
-
-      teacherView?.classList.add('hidden');
-      parentView?.classList.remove('hidden');
-      tabParent?.classList.add('bg-brand-700', 'text-white', 'shadow-xs');
-      tabParent?.classList.remove('text-slate-600');
-      tabTeacher?.classList.remove('bg-brand-700', 'text-white', 'shadow-xs');
-      tabTeacher?.classList.add('text-slate-600');
-      renderParentButtons();
-      renderParentView();
-    }
-
-    // ==================== أزرار الصفوف والشعب ====================
-    function renderParentButtons() {
-      const gradeWrap = document.getElementById('parent-grade-buttons');
-      const secWrap = document.getElementById('parent-section-buttons');
-
-      if (gradeWrap) {
-        gradeWrap.innerHTML = GRADES.map((g) => {
-          const active = state.parentGrade === g.id;
-          return `
-            <button
-              type="button"
-              onclick="state.parentGrade='${g.id}'; renderParentButtons(); renderParentView();"
-              class="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                active
-                  ? 'bg-brand-700 text-white border-brand-700 shadow-xs'
-                  : 'bg-slate-50 text-slate-800 border-slate-200 hover:bg-slate-100'
-              }"
-            >
-              <span>${g.icon}</span>
-              <span>${g.label}</span>
-            </button>`;
-        }).join('');
-      }
-
-      if (secWrap) {
-        secWrap.innerHTML = ['أ', 'ب']
-          .map((sec) => {
-            const active = state.parentSection === sec;
-            return `
-              <button
-                type="button"
-                onclick="state.parentSection='${sec}'; renderParentButtons(); renderParentView();"
-                class="px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold border transition cursor-pointer ${
-                  active
-                    ? 'bg-brand-800 text-white border-brand-800 shadow-xs'
-                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-                }"
-              >
-                شعبة (${sec})
-              </button>`;
-          })
-          .join('');
-      }
-    }
-
-    function renderTeacherButtons() {
-      const gradeWrap = document.getElementById('teacher-grade-buttons');
-      const secWrap = document.getElementById('teacher-section-buttons');
-      const secBox = document.getElementById('teacher-section-wrap');
-
-      if (gradeWrap) {
-        const items = [
-          ...GRADES.map((g) => ({ id: g.id, label: g.label, icon: g.icon })),
-          { id: 'GENERAL', label: 'عام', icon: '📢' },
-        ];
-        gradeWrap.innerHTML = items
-          .map((item) => {
-            const active = state.teacherGrade === item.id;
-            return `
-              <button
-                type="button"
-                onclick="state.teacherGrade='${item.id}'; renderTeacherButtons();"
-                class="flex items-center justify-center gap-1 py-2.5 px-2 rounded-xl text-xs font-extrabold border transition cursor-pointer ${
-                  active
-                    ? 'bg-brand-700 text-white border-brand-700 shadow-xs'
-                    : 'bg-slate-50 text-slate-800 border-slate-200 hover:bg-slate-100'
-                }"
-              >
-                <span>${item.icon}</span>
-                <span>${item.label}</span>
-              </button>`;
-          })
-          .join('');
-      }
-
-      if (state.teacherGrade === 'GENERAL') {
-        secBox?.classList.add('hidden');
-      } else {
-        secBox?.classList.remove('hidden');
-      }
-
-      if (secWrap) {
-        secWrap.innerHTML = ['أ', 'ب']
-          .map((sec) => {
-            const active = state.teacherSection === sec;
-            return `
-              <button
-                type="button"
-                onclick="state.teacherSection='${sec}'; renderTeacherButtons();"
-                class="px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold border transition cursor-pointer ${
-                  active
-                    ? 'bg-brand-800 text-white border-brand-800 shadow-xs'
-                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-                }"
-              >
-                شعبة (${sec})
-              </button>`;
-          })
-          .join('');
-      }
-    }
-
-    // ==================== عرض المنشورات والتعليقات ====================
-    function renderCommentsBox(post) {
+    // =========================================================================
+    // عرض البطاقات والتعليقات (واجهة ولي الأمر + واجهة المدرس)
+    // =========================================================================
+    function renderPostCard(post, options = {}) {
+      const isGeneral = post.grade === "GENERAL";
       const comments = state.commentsByPost[post.id] || [];
-      const isOpen = Boolean(state.openCommentPostIds[post.id]);
-      const allowDeleteComment = canManagePost(post);
+      const isOpen = Boolean(state.openComments[post.id]);
+      const isClosed = Boolean(post.comments_closed);
+      const manageable = canManagePost(post);
+
+      const targetBadge = isGeneral
+        ? `<span class="badge badge-general">تعميم عام</span>`
+        : `<span class="badge badge-grade">الصف ${escapeHtml(post.grade)} — شعبة ${escapeHtml(post.section || "")}</span>`;
+
+      const subjectBadge = post.subject
+        ? `<span class="badge badge-subject">${escapeHtml(post.subject)}</span>`
+        : "";
+
+      const authorLabel = post.teacher_name ? `الناشر: ${escapeHtml(post.teacher_name)}` : "";
+      const closedBadge = isClosed ? `<span class="badge badge-closed">التعليقات مغلقة</span>` : "";
+
+      let manageButtonsHtml = "";
+      if (options.showManageControls) {
+        if (manageable) {
+          manageButtonsHtml += `
+            <button class="btn btn-warn btn-sm" type="button" onclick="handleToggleComments('${escapeHtml(post.id)}', ${!isClosed})">
+              ${isClosed ? "فتح التعليقات" : "إغلاق التعليقات"}
+            </button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="handleDeletePost('${escapeHtml(post.id)}')">
+              حذف
+            </button>
+          `;
+        } else {
+          manageButtonsHtml += `<span class="post-date">منشور زميل</span>`;
+        }
+      }
+
+      const commentsHtml = isOpen ? renderCommentsSection(post) : "";
+
+      return `
+        <article class="post-item">
+          <div class="post-header">
+            <div class="post-meta">
+              ${targetBadge}
+              ${subjectBadge}
+              ${closedBadge}
+              ${authorLabel ? `<span class="post-date">${authorLabel}</span>` : ""}
+            </div>
+            <span class="post-date">${escapeHtml(formatDateAr(post.created_at))}</span>
+          </div>
+          <div class="post-body">${escapeHtml(post.body)}</div>
+          <div class="post-footer">
+            <button class="btn btn-soft btn-sm" type="button" onclick="toggleCommentsBox('${escapeHtml(post.id)}')">
+              💬 استفسارات وتعليقات (${comments.length})
+            </button>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              ${manageButtonsHtml}
+            </div>
+          </div>
+          ${commentsHtml}
+        </article>
+      `;
+    }
+
+    function renderCommentsSection(post) {
+      const comments = state.commentsByPost[post.id] || [];
+      const isClosed = Boolean(post.comments_closed);
+      const manageable = canManagePost(post);
 
       const itemsHtml = comments.length
-        ? comments
-            .map(
-              (c) => `
-              <div class="rounded-xl p-2.5 text-xs border flex items-start justify-between gap-2 ${
-                c.isTeacher
-                  ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
-                  : 'bg-slate-50 border-slate-200 text-slate-800'
-              }">
-                <div class="min-w-0 space-y-0.5">
-                  <div class="flex flex-wrap items-center gap-1.5">
-                    <span class="font-extrabold">${escapeHtml(c.authorName)}</span>
-                    ${
-                      c.isTeacher
-                        ? '<span class="px-1.5 py-0.2 rounded bg-emerald-700 text-white text-[10px] font-bold">مدرس</span>'
-                        : ''
-                    }
-                    <span class="text-[10px] text-slate-400">${escapeHtml(formatDateTime(c.createdAt))}</span>
-                  </div>
-                  <p class="leading-relaxed whitespace-pre-line">${escapeHtml(c.message)}</p>
-                </div>
-                ${
-                  allowDeleteComment
-                    ? `<button
-                         type="button"
-                         onclick="handleDeleteComment('${escapeHtml(post.id)}', '${escapeHtml(c.id)}')"
-                         title="حذف التعليق"
-                         class="text-[11px] font-bold text-rose-600 hover:text-rose-800 px-1.5 py-0.5 rounded hover:bg-rose-50 cursor-pointer shrink-0"
-                       >
-                         حذف
-                       </button>`
-                    : ''
-                }
-              </div>`
-            )
-            .join('')
-        : '<p class="text-xs text-slate-400">لا توجد تعليقات أو استفسارات بعد.</p>';
+        ? comments.map((c) => {
+            const isTeacherReply = Boolean(c.is_teacher_reply);
+            const authorName = escapeHtml(c.author_name || (isTeacherReply ? "مدرس" : "ولي أمر"));
+            const replyTag = isTeacherReply ? `<span class="badge-teacher-reply">مدرس</span>` : "";
+            const deleteBtn = manageable
+              ? `<button class="btn btn-danger btn-sm" type="button" onclick="handleDeleteComment('${escapeHtml(post.id)}', '${escapeHtml(c.id)}')">حذف</button>`
+              : "";
 
-      const formHtml =
-        post.commentsClosed && !state.teacherSession
-          ? '<div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-900">التعليقات مغلقة على هذا التبليغ.</div>'
-          : `<form onsubmit="handleAddComment(event, '${escapeHtml(post.id)}')" class="space-y-2 pt-1">
-               ${
-                 state.teacherSession
-                   ? ''
-                   : `<input
-                        id="comment-author-${escapeHtml(post.id)}"
-                        type="text"
-                        maxlength="60"
-                        placeholder="اسم الطالب أو ولي الأمر (اختياري)"
-                        class="w-full sm:w-64 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:outline-none focus:border-brand-600"
-                      />`
-               }
-               <div class="flex items-center gap-2">
-                 <input
-                   id="comment-msg-${escapeHtml(post.id)}"
-                   type="text"
-                   maxlength="250"
-                   required
-                   placeholder="${state.teacherSession ? 'اكتب رداً مختصراً باسمك كمدرس...' : 'اكتب استفساراً قصيراً (حتى 250 حرفاً)...'}"
-                   class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
-                 />
-                 <button
-                   type="submit"
-                   class="px-4 py-2 rounded-xl text-xs font-extrabold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer shrink-0"
-                 >
-                   إرسال
-                 </button>
-               </div>
-             </form>`;
+            return `
+              <div class="comment-item">
+                <div class="comment-top">
+                  <div>
+                    <span class="comment-author">${authorName}</span>
+                    ${replyTag}
+                    <span class="post-date">• ${escapeHtml(formatDateAr(c.created_at))}</span>
+                  </div>
+                  ${deleteBtn}
+                </div>
+                <div style="font-size: 0.9rem; color: #1e293b;">${escapeHtml(c.body)}</div>
+              </div>
+            `;
+          }).join("")
+        : `<div class="post-date" style="margin-bottom: 8px;">لا توجد تعليقات بعد على هذا التبليغ.</div>`;
+
+      let formHtml = "";
+      if (isClosed && !manageable) {
+        formHtml = `<div class="alert alert-info" style="margin-top: 6px;">التعليقات مغلقة على هذا التبليغ.</div>`;
+      } else {
+        const defaultName = state.session ? state.session.name : "";
+        const namePlaceholder = state.session
+          ? "اسم المرسل (الافتراضي اسم حسابك)"
+          : "اسم الطالب أو ولي الأمر (اختياري)";
+
+        formHtml = `
+          <div class="comment-form">
+            <div class="comment-form-row">
+              <input id="commentAuthor-${escapeHtml(post.id)}" type="text" maxlength="60" value="${escapeHtml(defaultName)}" placeholder="${escapeHtml(namePlaceholder)}" />
+              <input id="commentBody-${escapeHtml(post.id)}" type="text" maxlength="${MAX_COMMENT_LENGTH}" placeholder="اكتب استفساراً أو رداً قصيراً (حتى 250 حرفاً)..." onkeydown="if(event.key==='Enter') handleAddComment('${escapeHtml(post.id)}')" />
+              <button class="btn btn-primary btn-sm" type="button" onclick="handleAddComment('${escapeHtml(post.id)}')">إرسال</button>
+            </div>
+            <div id="commentFeedback-${escapeHtml(post.id)}"></div>
+          </div>
+        `;
+      }
 
       return `
-        <div class="pt-2.5 mt-2.5 border-t border-slate-100 space-y-2.5">
-          <div class="flex items-center justify-between gap-2">
-            <button
-              type="button"
-              onclick="toggleCommentDrawer('${escapeHtml(post.id)}')"
-              class="inline-flex items-center gap-1.5 text-xs font-extrabold text-brand-800 hover:text-brand-950 cursor-pointer"
-            >
-              <span>💬</span>
-              <span>استفسارات وتعليقات (${comments.length})</span>
-              <span>${isOpen ? '▲' : '▼'}</span>
-            </button>
-            ${
-              post.commentsClosed
-                ? '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-[11px] font-bold">مغلق</span>'
-                : ''
-            }
-          </div>
-
-          ${
-            isOpen
-              ? `<div class="space-y-2 pt-1">
-                   <div class="space-y-1.5 max-h-60 overflow-y-auto">${itemsHtml}</div>
-                   ${formHtml}
-                 </div>`
-              : ''
-          }
-        </div>`;
+        <div class="comments-box">
+          ${itemsHtml}
+          ${formHtml}
+        </div>
+      `;
     }
 
-    function renderPostCard(post) {
-      const targetLabel = formatTargetLabel(post);
-      const dt = formatDateTime(post.createdAt);
-      const attachmentHtml = post.attachment
-        ? post.attachment.type === 'image' && post.attachment.dataUrl
-          ? `<div class="mt-3">
-               <img
-                 src="${post.attachment.dataUrl}"
-                 alt="${escapeHtml(post.attachment.name || 'مرفق')}"
-                 class="max-h-80 w-auto rounded-xl border border-slate-200 object-contain bg-slate-50"
-               />
-             </div>`
-          : `<div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700">
-               <span>📄</span>
-               <span>${escapeHtml(post.attachment.name || 'ملف مرفق')}</span>
-             </div>`
-        : '';
-
-      return `
-        <article class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-2 animate-fade-in">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-1.5">
-              <span class="px-2.5 py-0.5 rounded-lg text-xs font-extrabold bg-brand-50 text-brand-900 border border-brand-200">
-                ${escapeHtml(targetLabel)}
-              </span>
-              ${
-                post.subject
-                  ? `<span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-800">
-                       📚 ${escapeHtml(post.subject)}
-                     </span>`
-                  : ''
-              }
-              ${
-                post.teacherName
-                  ? `<span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-900">
-                       👨‍🏫 ${escapeHtml(post.teacherName)}
-                     </span>`
-                  : ''
-              }
-            </div>
-            ${dt ? `<span class="text-[11px] font-semibold text-slate-400">${escapeHtml(dt)}</span>` : ''}
-          </div>
-          <p class="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line pt-1">${escapeHtml(post.message)}</p>
-          ${attachmentHtml}
-          ${renderCommentsBox(post)}
-        </article>`;
+    function toggleCommentsBox(postId) {
+      state.openComments[postId] = !state.openComments[postId];
+      if (state.mode === "parent") {
+        renderParentView();
+      } else {
+        renderTeacherPosts();
+      }
     }
 
     function renderParentView() {
-      const titleEl = document.getElementById('parent-active-title');
-      const secList = document.getElementById('section-posts-list');
-      const genList = document.getElementById('general-posts-list');
+      renderParentControls();
 
-      if (titleEl) {
-        titleEl.textContent = `واجبات وتبليغات ${getGradeLabel(state.parentGrade)} — شعبة (${state.parentSection})`;
-      }
-
-      const sectionPosts = state.posts.filter(
-        (p) => p.grade === state.parentGrade && p.section === state.parentSection
+      const activePosts = filterActivePosts(state.posts);
+      const gradePosts = activePosts.filter(
+        (p) => p.grade === state.parentGrade && (p.section || "أ") === state.parentSection
       );
-      const generalPosts = state.posts.filter((p) => p.grade === 'GENERAL');
+      const generalPosts = activePosts.filter((p) => p.grade === "GENERAL");
 
-      if (secList) {
-        secList.innerHTML = sectionPosts.length
-          ? sectionPosts.map(renderPostCard).join('')
-          : '<div class="bg-white rounded-2xl border border-slate-200 p-6 text-center text-xs sm:text-sm font-bold text-slate-400">لا توجد تبليغات منشورة لهذه الشعبة حالياً.</div>';
-      }
+      document.getElementById("parentSelectedHeading").textContent =
+        `تبليغات الصف ${state.parentGrade} — شعبة ${state.parentSection}`;
+      document.getElementById("parentPostsCount").textContent = `${gradePosts.length} تبليغ`;
+      document.getElementById("parentGeneralCount").textContent = `${generalPosts.length} تعميم`;
 
-      if (genList) {
-        genList.innerHTML = generalPosts.length
-          ? generalPosts.map(renderPostCard).join('')
-          : '<div class="bg-white rounded-2xl border border-slate-200 p-5 text-center text-xs sm:text-sm font-bold text-slate-400">لا توجد تعميمات عامة حالياً.</div>';
-      }
+      const gradeContainer = document.getElementById("parentGradePosts");
+      gradeContainer.innerHTML = gradePosts.length
+        ? gradePosts.map((p) => renderPostCard(p, { showManageControls: false })).join("")
+        : `<div class="empty-state">لا توجد تبليغات يومية منشورة خلال آخر 7 أيام لهذا الصف والشعبة.</div>`;
+
+      const generalContainer = document.getElementById("parentGeneralPosts");
+      generalContainer.innerHTML = generalPosts.length
+        ? generalPosts.map((p) => renderPostCard(p, { showManageControls: false })).join("")
+        : `<div class="empty-state">لا توجد تعميمات عامة حالياً.</div>`;
     }
 
-    function renderManageList() {
-      const listEl = document.getElementById('manage-list');
-      const countEl = document.getElementById('manage-count');
-      if (countEl) countEl.textContent = `${state.posts.length} منشور`;
-      if (!listEl) return;
+    function renderTeacherPosts() {
+      if (!state.session) return;
+      const onlyMine = document.getElementById("onlyMineCheckbox").checked;
+      let list = filterActivePosts(state.posts);
 
-      if (!state.posts.length) {
-        listEl.innerHTML = '<div class="text-center text-xs font-bold text-slate-400 py-6">لا توجد منشورات.</div>';
+      if (onlyMine) {
+        list = list.filter((p) => p.teacher_id === state.session.id);
+      }
+
+      const container = document.getElementById("teacherPostsList");
+      container.innerHTML = list.length
+        ? list.map((p) => renderPostCard(p, { showManageControls: true })).join("")
+        : `<div class="empty-state">لا توجد تبليغات نشطة لعرضها.</div>`;
+    }
+
+    // =========================================================================
+    // عمليات النشر والتعديل والحذف والتعليقات
+    // =========================================================================
+    async function handlePublishPost() {
+      if (!state.session) return;
+      resetIdleTimer();
+
+      const fb = document.getElementById("publishFeedback");
+      const btn = document.getElementById("publishPostBtn");
+      const subject = document.getElementById("postSubjectInput").value.trim();
+      const body = document.getElementById("postBodyInput").value.trim();
+      const grade = state.postGrade;
+      const section = grade === "GENERAL" ? "" : state.postSection;
+
+      if (!body) {
+        fb.innerHTML = `<span class="alert alert-danger" style="display:inline-block;margin:0;padding:6px 12px;">يرجى كتابة نص التبليغ.</span>`;
         return;
       }
 
-      listEl.innerHTML = state.posts
-        .map((p) => {
-          const allowed = canManagePost(p);
-          return `
-            <div class="flex flex-wrap sm:flex-nowrap items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-              <div class="min-w-0 space-y-1">
-                <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
-                  <span class="px-2 py-0.5 rounded bg-brand-100 text-brand-900">${escapeHtml(formatTargetLabel(p))}</span>
-                  ${p.subject ? `<span class="text-slate-700">${escapeHtml(p.subject)}</span>` : ''}
-                  ${p.teacherName ? `<span class="text-slate-500">• ${escapeHtml(p.teacherName)}</span>` : ''}
-                  <span class="px-1.5 py-0.5 rounded text-[10px] ${
-                    p.commentsClosed ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900'
-                  }">
-                    ${p.commentsClosed ? 'التعليقات مغلقة' : 'التعليقات مفتوحة'}
-                  </span>
-                </div>
-                <p class="text-xs text-slate-800 line-clamp-2">${escapeHtml(p.message)}</p>
-              </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                ${
-                  allowed
-                    ? `<button
-                         type="button"
-                         onclick="handleToggleCommentsClosed('${escapeHtml(p.id)}')"
-                         class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 cursor-pointer"
-                       >
-                         ${p.commentsClosed ? 'فتح التعليقات' : 'إغلاق التعليقات'}
-                       </button>
-                       <button
-                         type="button"
-                         onclick="handleDeletePost('${escapeHtml(p.id)}')"
-                         class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer"
-                       >
-                         حذف
-                       </button>`
-                    : '<span class="text-[11px] font-semibold text-slate-400 px-2">منشور زميل</span>'
-                }
-              </div>
-            </div>`;
-        })
-        .join('');
-    }
+      btn.disabled = true;
+      fb.innerHTML = "";
 
-    // ==================== ضغط الصور والنشر والحذف ====================
-    function compressImageFile(file, maxWidth = 1000, quality = 0.72) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) {
-              reject(new Error('Canvas context unavailable'));
-              return;
-            }
-            ctx.drawImage(img, 0, 0, width, height);
-            const dataUrl = canvas.toDataURL('image/jpeg', quality);
-            resolve({
-              type: 'image',
-              name: file.name,
-              dataUrl,
-            });
-          };
-          img.onerror = reject;
-          img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function handleAttachmentChange(event) {
-      const file = event.target.files?.[0];
-      const infoEl = document.getElementById('attachment-info');
-      const clearBtn = document.getElementById('clear-attachment-btn');
-
-      if (!file) {
-        state.pendingAttachment = null;
-        if (infoEl) infoEl.textContent = '';
-        clearBtn?.classList.add('hidden');
-        return;
-      }
-
-      if (file.type.startsWith('image/')) {
+      try {
         try {
-          const compressed = await compressImageFile(file, 1000, 0.72);
-          state.pendingAttachment = compressed;
-          if (infoEl) infoEl.textContent = `تم تجهيز الصورة وضغطها تلقائياً: ${file.name}`;
-          clearBtn?.classList.remove('hidden');
-        } catch (err) {
-          console.error(err);
-          showToast('تعذّر ضغط الصورة؛ جرّب صورة أخرى.', 'error');
+          await sbRpc("add_announcement_secure", {
+            p_teacher_id: state.session.id,
+            p_pin: null,
+            p_grade: grade,
+            p_section: section,
+            p_subject: subject || (grade === "GENERAL" ? "تعميم عام" : (state.session.subject || "واجب يومي")),
+            p_body: body
+          });
+        } catch (_) {
+          // إدراج مباشر كخيار بديل إذا لم تكن الدالة مفعلة
+          await sbRest("/announcements", {
+            method: "POST",
+            headers: { "Prefer": "return=minimal" },
+            body: JSON.stringify({
+              teacher_id: state.session.id,
+              teacher_name: state.session.name,
+              grade,
+              section,
+              subject: subject || (grade === "GENERAL" ? "تعميم عام" : (state.session.subject || "واجب يومي")),
+              body,
+              comments_closed: false
+            })
+          });
         }
-      } else {
-        if (file.size > 2 * 1024 * 1024) {
-          showToast('حجم الملف كبير؛ يُفضّل أن يكون أقل من 2MB.', 'warn');
-          event.target.value = '';
-          return;
-        }
-        state.pendingAttachment = {
-          type: 'file',
-          name: file.name,
-          dataUrl: null,
-        };
-        if (infoEl) infoEl.textContent = `تم إرفاق الملف: ${file.name}`;
-        clearBtn?.classList.remove('hidden');
+
+        document.getElementById("postBodyInput").value = "";
+        fb.innerHTML = `<span class="alert alert-success" style="display:inline-block;margin:0;padding:6px 12px;">تم نشر التبليغ بنجاح.</span>`;
+        await refreshAllData(false);
+      } catch (err) {
+        fb.innerHTML = `<span class="alert alert-danger" style="display:inline-block;margin:0;padding:6px 12px;">خطأ أثناء النشر: ${escapeHtml(err.message)}</span>`;
+      } finally {
+        btn.disabled = false;
       }
-    }
-
-    function clearAttachment() {
-      state.pendingAttachment = null;
-      const input = document.getElementById('teacher-attachment');
-      const infoEl = document.getElementById('attachment-info');
-      const clearBtn = document.getElementById('clear-attachment-btn');
-      if (input) input.value = '';
-      if (infoEl) infoEl.textContent = '';
-      clearBtn?.classList.add('hidden');
-    }
-
-    function resetTeacherForm() {
-      const msgEl = document.getElementById('teacher-message');
-      const subjOverride = document.getElementById('teacher-subject-override');
-      if (msgEl) msgEl.value = '';
-      if (subjOverride) subjOverride.value = '';
-      clearAttachment();
-    }
-
-    async function handleTeacherSubmit(event) {
-      event.preventDefault();
-      touchTeacherActivity();
-
-      if (isSupabaseConfigured() && !state.teacherSession) {
-        openTeacherPinModal();
-        return;
-      }
-
-      const msgEl = document.getElementById('teacher-message');
-      const message = (msgEl?.value || '').trim();
-      if (!message) {
-        showToast('اكتب نص الواجب أو التبليغ أولاً.', 'warn');
-        return;
-      }
-
-      const overrideSubj = (document.getElementById('teacher-subject-override')?.value || '').trim();
-      const teacherName = state.teacherSession?.teacherName || 'مدرس المادة';
-      const subject =
-        overrideSubj ||
-        state.teacherSession?.subject ||
-        (state.teacherGrade === 'GENERAL' ? 'تعميم عام' : 'واجب يومي');
-
-      const post = {
-        id: `post-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        grade: state.teacherGrade,
-        section: state.teacherGrade === 'GENERAL' ? '' : state.teacherSection,
-        teacherId: state.teacherSession?.id || '',
-        teacherName,
-        subject,
-        message,
-        attachment: state.pendingAttachment,
-        commentsClosed: false,
-        createdAt: new Date().toISOString(),
-      };
-
-      const btn = document.getElementById('publish-btn');
-      if (btn) btn.disabled = true;
-
-      const ok = await persistNewPost(post);
-
-      if (btn) btn.disabled = false;
-      if (!ok) return;
-
-      resetTeacherForm();
-      renderManageList();
-      renderParentView();
-      showToast('تم نشر التبليغ بنجاح.', 'success');
     }
 
     async function handleDeletePost(postId) {
-      touchTeacherActivity();
-      if (isSupabaseConfigured() && !state.teacherSession) {
-        openTeacherPinModal();
-        return;
-      }
-      const ok = await removePostById(postId);
-      if (!ok) return;
-      renderManageList();
-      renderParentView();
-      showToast('تم حذف التبليغ.', 'info');
-    }
-
-    // ==================== النوافذ المنبثقة وإعدادات قاعدة البيانات ====================
-    function openInstallModal() {
-      const modal = document.getElementById('install-modal');
-      modal?.classList.remove('hidden');
-      modal?.classList.add('flex');
-    }
-
-    function closeInstallModal() {
-      const modal = document.getElementById('install-modal');
-      modal?.classList.add('hidden');
-      modal?.classList.remove('flex');
-    }
-
-    function openDbSetupModal() {
-      const cfg = getActiveSupabaseConfig();
-      const urlInput = document.getElementById('supabase-url-input');
-      const keyInput = document.getElementById('supabase-key-input');
-      if (urlInput) urlInput.value = cfg.SUPABASE_URL;
-      if (keyInput) keyInput.value = cfg.SUPABASE_ANON_KEY;
-      updateConnectionIndicators();
-      const modal = document.getElementById('db-setup-modal');
-      modal?.classList.remove('hidden');
-      modal?.classList.add('flex');
-    }
-
-    function closeDbSetupModal() {
-      const modal = document.getElementById('db-setup-modal');
-      modal?.classList.add('hidden');
-      modal?.classList.remove('flex');
-    }
-
-    async function saveSupabaseCredentials() {
-      const url = (document.getElementById('supabase-url-input')?.value || '').trim();
-      const key = (document.getElementById('supabase-key-input')?.value || '').trim();
-
-      if (!url || !key) {
-        showToast('أدخل SUPABASE_URL و SUPABASE_ANON_KEY أولاً.', 'warn');
-        return;
-      }
+      if (!state.session) return;
+      resetIdleTimer();
+      const post = state.posts.find((p) => p.id === postId);
+      if (!canManagePost(post)) return;
+      if (!confirm("هل أنت متأكد من حذف هذا التبليغ؟")) return;
 
       try {
-        localStorage.setItem(
-          SUPABASE_OVERRIDE_KEY,
-          JSON.stringify({ SUPABASE_URL: url, SUPABASE_ANON_KEY: key })
-        );
-      } catch (err) {
-        console.error(err);
-      }
-
-      await loadPostsFromSource();
-      renderParentView();
-      renderManageList();
-      updateConnectionIndicators();
-
-      if (state.cloudConnected) {
-        showToast('تم الاتصال بـ Supabase وتفعيل المزامنة بنجاح.', 'success');
-        closeDbSetupModal();
-      } else {
-        showToast('تم حفظ البيانات؛ تحقق من الجداول والدوال في Supabase.', 'warn');
-      }
-    }
-
-    async function clearSupabaseCredentials() {
-      try {
-        localStorage.removeItem(SUPABASE_OVERRIDE_KEY);
-      } catch (err) {
-        console.error(err);
-      }
-      state.cloudConnected = false;
-      await loadPostsFromSource();
-      renderParentView();
-      renderManageList();
-      updateConnectionIndicators();
-      showToast('تمت العودة إلى الوضع المحلي.', 'info');
-    }
-
-    function bindActivityListeners() {
-      ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach((evt) => {
-        window.addEventListener(evt, touchTeacherActivity, { passive: true });
-      });
-    }
-
-    // ==================== التهيئة الأولية ====================
-    async function initApp() {
-      loadSavedTeacherSession();
-      bindActivityListeners();
-      loadSavedChildren();
-      renderParentButtons();
-      renderTeacherButtons();
-      await loadPostsFromSource();
-      renderParentView();
-      renderManageList();
-    }
-
-    initApp();
-  </script>
-  <script>
-  (() => {
-    const hideDbButton = () => {
-      document.querySelectorAll("button, a").forEach((el) => {
-        if (el.textContent && el.textContent.includes("قاعدة البيانات")) {
-          el.style.display = "none";
+        try {
+          await sbRpc("delete_announcement_secure", {
+            p_announcement_id: postId,
+            p_actor_id: state.session.id
+          });
+        } catch (_) {
+          await sbRest(`/announcements?id=eq.${encodeURIComponent(postId)}`, {
+            method: "DELETE",
+            headers: { "Prefer": "return=minimal" }
+          });
         }
+        await refreshAllData(false);
+      } catch (err) {
+        alert(`تعذر حذف التبليغ: ${err.message}`);
+      }
+    }
+
+    async function handleToggleComments(postId, closedState) {
+      if (!state.session) return;
+      resetIdleTimer();
+      const post = state.posts.find((p) => p.id === postId);
+      if (!canManagePost(post)) return;
+
+      try {
+        try {
+          await sbRpc("toggle_comments_closed_secure", {
+            p_announcement_id: postId,
+            p_actor_id: state.session.id,
+            p_closed: Boolean(closedState)
+          });
+        } catch (_) {
+          await sbRest(`/announcements?id=eq.${encodeURIComponent(postId)}`, {
+            method: "PATCH",
+            headers: { "Prefer": "return=minimal" },
+            body: JSON.stringify({ comments_closed: Boolean(closedState) })
+          });
+        }
+        await refreshAllData(false);
+      } catch (err) {
+        alert(`تعذر تحديث حالة التعليقات: ${err.message}`);
+      }
+    }
+
+    async function handleAddComment(postId) {
+      if (state.session) resetIdleTimer();
+
+      const authorEl = document.getElementById(`commentAuthor-${postId}`);
+      const bodyEl = document.getElementById(`commentBody-${postId}`);
+      const fbEl = document.getElementById(`commentFeedback-${postId}`);
+
+      const rawAuthor = (authorEl ? authorEl.value : "").trim();
+      const rawBody = (bodyEl ? bodyEl.value : "").trim();
+
+      if (!rawBody) {
+        fbEl.innerHTML = `<div class="alert alert-danger" style="margin-top:6px;">يرجى كتابة نص التعليق قبل الإرسال.</div>`;
+        return;
+      }
+
+      if (rawBody.length > MAX_COMMENT_LENGTH) {
+        fbEl.innerHTML = `<div class="alert alert-danger" style="margin-top:6px;">الحد الأقصى للتعليق هو ${MAX_COMMENT_LENGTH} حرفاً.</div>`;
+        return;
+      }
+
+      const isTeacherReply = Boolean(state.session);
+      const authorName = rawAuthor || (isTeacherReply ? state.session.name : "ولي أمر");
+
+      try {
+        try {
+          await sbRpc("add_teacher_comment_secure", {
+            p_announcement_id: postId,
+            p_author_name: authorName,
+            p_body: rawBody,
+            p_is_teacher_reply: isTeacherReply,
+            p_teacher_id: state.session ? state.session.id : null
+          });
+        } catch (_) {
+          await sbRest("/announcement_comments", {
+            method: "POST",
+            headers: { "Prefer": "return=minimal" },
+            body: JSON.stringify({
+              announcement_id: postId,
+              author_name: authorName,
+              body: rawBody,
+              is_teacher_reply: isTeacherReply,
+              teacher_id: state.session ? state.session.id : null
+            })
+          });
+        }
+
+        state.openComments[postId] = true;
+        await refreshAllData(false);
+      } catch (err) {
+        fbEl.innerHTML = `<div class="alert alert-danger" style="margin-top:6px;">تعذر إرسال التعليق: ${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    async function handleDeleteComment(postId, commentId) {
+      if (!state.session) return;
+      resetIdleTimer();
+      const post = state.posts.find((p) => p.id === postId);
+      if (!canManagePost(post)) return;
+
+      try {
+        try {
+          await sbRpc("delete_comment_secure", {
+            p_comment_id: commentId,
+            p_actor_id: state.session.id
+          });
+        } catch (_) {
+          await sbRest(`/announcement_comments?id=eq.${encodeURIComponent(commentId)}`, {
+            method: "DELETE",
+            headers: { "Prefer": "return=minimal" }
+          });
+        }
+        state.openComments[postId] = true;
+        await refreshAllData(false);
+      } catch (err) {
+        alert(`تعذر حذف التعليق: ${err.message}`);
+      }
+    }
+
+    // =========================================================================
+    // لوحة الإدارة لتحديث حسابات المدرسين والرموز
+    // =========================================================================
+    async function loadAdminTeachersTable() {
+      if (!state.session || !state.session.isAdmin) return;
+      try {
+        const list = await sbRpc("admin_list_teachers", { p_admin_id: state.session.id });
+        if (Array.isArray(list) && list.length > 0) {
+          state.teacherAccounts = list;
+        }
+      } catch (_) {
+        // الإبقاء على القائمة المتوفرة في الحالة
+      }
+
+      const sel = document.getElementById("adminTeacherSelect");
+      const tbody = document.getElementById("adminTeachersTableBody");
+      sel.innerHTML = "";
+      tbody.innerHTML = "";
+
+      state.teacherAccounts.forEach((acc) => {
+        const opt = document.createElement("option");
+        opt.value = acc.id;
+        opt.textContent = `${acc.id} — ${acc.teacher_name}`;
+        sel.appendChild(opt);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(acc.id)}</td>
+          <td>${escapeHtml(acc.teacher_name)}</td>
+          <td>${escapeHtml(acc.subject || "")}</td>
+          <td>${escapeHtml(acc.pin || "")}</td>
+          <td>${acc.active === false ? "موقوف" : "نشط"}</td>
+          <td>
+            <button class="btn btn-soft btn-sm" type="button" onclick="selectAdminTeacher('${escapeHtml(acc.id)}')">تعديل</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
       });
-    };
-    document.addEventListener("DOMContentLoaded", hideDbButton);
-    window.addEventListener("load", hideDbButton);
-    setTimeout(hideDbButton, 300);
-  })();
-</script>
+
+      fillAdminTeacherForm();
+    }
+
+    function selectAdminTeacher(id) {
+      document.getElementById("adminTeacherSelect").value = id;
+      fillAdminTeacherForm();
+    }
+
+    function fillAdminTeacherForm() {
+      const id = document.getElementById("adminTeacherSelect").value;
+      const acc = state.teacherAccounts.find((t) => t.id === id);
+      if (!acc) return;
+      document.getElementById("adminTeacherNameInput").value = acc.teacher_name || "";
+      document.getElementById("adminTeacherSubjectInput").value = acc.subject || "";
+      document.getElementById("adminTeacherPinInput").value = acc.pin || "";
+      document.getElementById("adminTeacherActiveSelect").value = acc.active === false ? "false" : "true";
+    }
+
+    async function handleAdminSaveTeacher() {
+      if (!state.session || !state.session.isAdmin) return;
+      resetIdleTimer();
+
+      const id = document.getElementById("adminTeacherSelect").value;
+      const name = document.getElementById("adminTeacherNameInput").value.trim();
+      const subject = document.getElementById("adminTeacherSubjectInput").value.trim();
+      const pin = document.getElementById("adminTeacherPinInput").value.trim();
+      const active = document.getElementById("adminTeacherActiveSelect").value === "true";
+      const fb = document.getElementById("adminFeedback");
+
+      if (!name || !pin) {
+        fb.innerHTML = `<div class="alert alert-danger">يرجى إدخال اسم المدرس والرمز السري.</div>`;
+        return;
+      }
+
+      try {
+        await sbRpc("admin_upsert_teacher", {
+          p_admin_id: state.session.id,
+          p_id: id,
+          p_teacher_name: name,
+          p_subject: subject,
+          p_pin: pin,
+          p_active: active
+        });
+        fb.innerHTML = `<div class="alert alert-success">تم حفظ بيانات الحساب (${escapeHtml(id)}) بنجاح.</div>`;
+        await loadAdminTeachersTable();
+        populateLoginSelect();
+      } catch (err) {
+        fb.innerHTML = `<div class="alert alert-danger">تعذر حفظ بيانات الحساب: ${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    // =========================================================================
+    // التهيئة والتحديث الدوري
+    // =========================================================================
+    async function refreshAllData(runCleanup = false) {
+      if (runCleanup) {
+        await cleanupExpiredDailyPosts();
+      }
+      await fetchPostsAndComments();
+      if (state.mode === "parent") {
+        renderParentView();
+      } else if (state.session) {
+        renderTeacherPosts();
+      }
+    }
+
+    ["click", "keydown", "scroll", "touchstart"].forEach((evtName) => {
+      window.addEventListener(evtName, () => {
+        if (state.session && state.mode === "teacher") {
+          resetIdleTimer();
+        }
+      }, { passive: true });
+    });
+
+    (async function init() {
+      renderParentControls();
+      renderTeacherPostControls();
+      populateLoginSelect();
+      await cleanupExpiredDailyPosts();
+      await Promise.all([
+        fetchPostsAndComments(),
+        loadAccountsListForLogin()
+      ]);
+      renderParentView();
+    })();
+  </script>
 </body>
 </html>
