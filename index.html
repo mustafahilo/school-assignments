@@ -110,7 +110,6 @@
     <!-- ==================== واجهة ولي الأمر ==================== -->
     <section id="parent-view" class="space-y-5 animate-fade-in">
 
-      <!-- تنبيه الوضع المحلي قبل ربط Supabase -->
       <div
         id="parent-local-banner"
         class="hidden rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs sm:text-sm text-amber-950 flex flex-wrap items-center justify-between gap-3"
@@ -130,7 +129,6 @@
         </button>
       </div>
 
-      <!-- بطاقة التحكم واختيار الصف والشعبة -->
       <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2">
@@ -157,10 +155,8 @@
           </div>
         </div>
 
-        <!-- أزرار الصفوف الستة -->
         <div id="parent-grade-buttons" class="grid grid-cols-3 sm:grid-cols-6 gap-2"></div>
 
-        <!-- أزرار الشعبة وحفظ اختصار الطالب -->
         <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
           <div id="parent-section-buttons" class="flex items-center gap-2"></div>
           <button
@@ -173,14 +169,12 @@
           </button>
         </div>
 
-        <!-- اختصارات الأبناء / الشُعب المحفوظة -->
         <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2">
           <span class="text-xs font-bold text-slate-500">اختصارات سريعة:</span>
           <div id="saved-children-list" class="flex flex-wrap items-center gap-2"></div>
         </div>
       </div>
 
-      <!-- التبليغات الخاصة بالشعبة المختارة -->
       <section class="space-y-3">
         <div class="flex items-center justify-between gap-2">
           <h2 id="parent-active-title" class="text-sm sm:text-base font-extrabold text-slate-900"></h2>
@@ -191,7 +185,6 @@
         <div id="section-posts-list" class="space-y-3"></div>
       </section>
 
-      <!-- قسم التعميمات العامة -->
       <section id="general-announcements-section" class="space-y-3 pt-2">
         <div class="flex items-center gap-2">
           <span class="text-base">📢</span>
@@ -202,106 +195,81 @@
 
     </section>
 
-    <!-- ==================== واجهة المدرس ==================== -->
+    <!-- ==================== واجهة المدرس والإدارة ==================== -->
     <section id="teacher-view" class="hidden space-y-6 animate-fade-in">
 
+      <!-- شريط هوية الحساب المتصل وقفل الجلسة التلقائي (30 دقيقة) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+          <span class="px-2.5 py-1 rounded-xl bg-brand-50 text-brand-900 border border-brand-200 font-extrabold">
+            👨‍🏫 <span id="active-teacher-badge">حساب المدرس</span>
+          </span>
+          <span id="active-teacher-role-pill" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs"></span>
+          <span class="text-[11px] font-semibold text-slate-500">
+            • قفل تلقائي بعد 30 دقيقة من الخمول
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onclick="lockTeacherSession()"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 cursor-pointer"
+        >
+          <span>🔒</span>
+          <span>قفل وضع المدرس</span>
+        </button>
+      </div>
+
+      <!-- نموذج نشر واجب أو تبليغ -->
       <form onsubmit="handleTeacherSubmit(event)" class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-2xs space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <h2 class="text-base sm:text-lg font-extrabold text-slate-900">نشر واجب أو تبليغ سريع</h2>
-            <p class="text-xs text-slate-500">اختر الصف والشعبة بالأيقونات واكتب التبليغ مباشرة دون حقل تاريخ منفصل</p>
+            <p class="text-xs text-slate-500">يُربط التبليغ بحسابك تلقائياً ويُظهر اسمك ومادتك المعتمدة</p>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onclick="lockTeacherSession()"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 cursor-pointer"
-            >
-              <span>🔒</span>
-              <span>قفل وضع المدرس</span>
-            </button>
-            <button
-              type="button"
-              onclick="openInstallModal()"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
-            >
-              <span>📲</span>
-              <span>أضف إلى شاشة الهاتف</span>
-            </button>
+          <button
+            type="button"
+            onclick="openInstallModal()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
+          >
+            <span>📲</span>
+            <span>أضف إلى شاشة الهاتف</span>
+          </button>
+        </div>
+
+        <!-- تخصيص المادة لهذا التبليغ عند الحاجة -->
+        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="text-xs sm:text-sm">
+            <span class="font-bold text-slate-500">المادة الافتراضية لحسابك:</span>
+            <span id="default-subject-label" class="font-extrabold text-brand-900 mr-1">—</span>
+          </div>
+          <div class="w-full sm:w-64">
+            <label for="teacher-subject-override" class="sr-only">تخصيص المادة لهذا التبليغ</label>
+            <input
+              id="teacher-subject-override"
+              type="text"
+              placeholder="مادة مخصصة لهذا التبليغ (اختياري)"
+              class="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:outline-none focus:border-brand-600"
+            />
           </div>
         </div>
 
-        <!-- اختصار اسم المدرس والمادة -->
-        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3.5 sm:p-4 space-y-3">
-          <div id="shortcut-display" class="hidden flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-              <span class="font-bold text-slate-500">الاختصار المحفوظ:</span>
-              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 font-extrabold text-slate-900">
-                👨‍🏫 <span id="shortcut-name-display"></span>
-              </span>
-              <span class="px-2.5 py-1 rounded-lg bg-brand-50 border border-brand-200 font-extrabold text-brand-900">
-                📚 <span id="shortcut-subject-display"></span>
-              </span>
-            </div>
-            <button
-              type="button"
-              onclick="editTeacherShortcut()"
-              class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 cursor-pointer"
-            >
-              تعديل الاختصار
-            </button>
-          </div>
-
-          <div id="shortcut-edit" class="space-y-3">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-xs font-extrabold text-slate-800">حفظ اسم المدرس والمادة كاختصار (مرة واحدة):</span>
-              <button
-                type="button"
-                onclick="saveTeacherShortcut()"
-                class="px-3 py-1 rounded-lg text-xs font-bold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer"
-              >
-                حفظ الاختصار
-              </button>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label for="teacher-name-input" class="block text-xs font-bold text-slate-700 mb-1">اسم المدرس</label>
-                <input
-                  id="teacher-name-input"
-                  type="text"
-                  placeholder="مثال: أ. علي حسين"
-                  class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs sm:text-sm focus:outline-none focus:border-brand-600"
-                />
-              </div>
-              <div>
-                <label for="teacher-subject-input" class="block text-xs font-bold text-slate-700 mb-1">المادة الدراسية</label>
-                <input
-                  id="teacher-subject-input"
-                  type="text"
-                  placeholder="مثال: الرياضيات"
-                  class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs sm:text-sm focus:outline-none focus:border-brand-600"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- اختيار الصف أو التعميم العام بالأيقونات -->
+        <!-- 1. اختيار الصف أو التعميم العام -->
         <div class="space-y-2">
           <span class="block text-xs font-extrabold text-slate-800">1. اختر الصف أو التعميم العام:</span>
           <div id="teacher-grade-buttons" class="grid grid-cols-3 sm:grid-cols-7 gap-2"></div>
         </div>
 
-        <!-- اختيار الشعبة بالأيقونات -->
+        <!-- 2. اختيار الشعبة -->
         <div id="teacher-section-wrap" class="space-y-2">
           <span class="block text-xs font-extrabold text-slate-800">2. اختر الشعبة:</span>
           <div id="teacher-section-buttons" class="flex items-center gap-2"></div>
         </div>
 
-        <!-- نص التبليغ المباشر -->
+        <!-- 3. نص التبليغ -->
         <div class="space-y-1.5">
           <label for="teacher-message" class="block text-xs font-extrabold text-slate-800">
-            3. نص الواجب أو التبليغ (اكتب اليوم والمواعيد والملاحظات كما تشاء)
+            3. نص الواجب أو التبليغ
           </label>
           <textarea
             id="teacher-message"
@@ -312,7 +280,7 @@
           ></textarea>
         </div>
 
-        <!-- إرفاق صورة مع ضغط تلقائي أو ملف خفيف -->
+        <!-- مرفق صورة أو ملف -->
         <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3.5 space-y-2.5">
           <div class="flex items-center justify-between gap-2">
             <label for="teacher-attachment" class="text-xs font-bold text-slate-800 cursor-pointer">
@@ -337,7 +305,6 @@
           <p id="attachment-info" class="text-[11px] font-semibold text-emerald-700"></p>
         </div>
 
-        <!-- أزرار النشر والمسح -->
         <div class="flex flex-wrap items-center justify-end gap-2.5 pt-1">
           <button
             type="button"
@@ -356,14 +323,122 @@
         </div>
       </form>
 
-      <!-- إدارة وحذف التبليغات المنشورة -->
+      <!-- إدارة وحذف التبليغات والتحكم بالتعليقات -->
       <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-3">
         <div class="flex items-center justify-between gap-2">
-          <h3 class="text-sm sm:text-base font-extrabold text-slate-900">التبليغات المنشورة (إدارة وحذف)</h3>
+          <h3 class="text-sm sm:text-base font-extrabold text-slate-900">التبليغات المنشورة (إدارة وحذف والتحكم بالتعليقات)</h3>
           <span id="manage-count" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">0 منشور</span>
         </div>
-        <div id="manage-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
+        <div id="manage-list" class="space-y-2 max-h-[28rem] overflow-y-auto"></div>
       </div>
+
+      <!-- لوحة إدارة جدول المدرسين والرموز (تظهر للمدير فقط is_admin = true) -->
+      <section id="admin-teachers-panel" class="hidden bg-white rounded-2xl border border-brand-200 p-4 sm:p-6 shadow-2xs space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-brand-950">🛡️ إدارة جدول المدرسين والرموز (50 مدرساً + الإدارة)</h3>
+            <p class="text-xs text-slate-500">إدخال وتعديل أسماء المدرسين والمواد والرموز السرية وتفعيل أو تعطيل أي حساب</p>
+          </div>
+          <button
+            type="button"
+            onclick="loadAdminTeachersList()"
+            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-50 hover:bg-brand-100 text-brand-900 border border-brand-200 cursor-pointer"
+          >
+            🔄 تحديث القائمة
+          </button>
+        </div>
+
+        <form onsubmit="handleAdminSaveTeacher(event)" class="rounded-2xl bg-slate-50 border border-slate-200 p-4 space-y-3">
+          <div class="text-xs font-extrabold text-slate-800">إضافة أو تحديث بيانات حساب مدرس:</div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
+            <div>
+              <label for="admin-t-id" class="block text-[11px] font-bold text-slate-700 mb-1">المعرّف (ID)</label>
+              <input
+                id="admin-t-id"
+                type="text"
+                required
+                placeholder="t-01"
+                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
+              />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="admin-t-name" class="block text-[11px] font-bold text-slate-700 mb-1">اسم المدرس</label>
+              <input
+                id="admin-t-name"
+                type="text"
+                required
+                placeholder="مثال: أ. علي حسين"
+                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
+              />
+            </div>
+            <div>
+              <label for="admin-t-subject" class="block text-[11px] font-bold text-slate-700 mb-1">المادة</label>
+              <input
+                id="admin-t-subject"
+                type="text"
+                required
+                placeholder="الرياضيات"
+                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
+              />
+            </div>
+            <div>
+              <label for="admin-t-pin" class="block text-[11px] font-bold text-slate-700 mb-1">الرمز السري (PIN)</label>
+              <input
+                id="admin-t-pin"
+                type="text"
+                required
+                placeholder="2001"
+                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
+              />
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+            <div class="flex flex-wrap items-center gap-4 text-xs font-bold text-slate-700">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input id="admin-t-active" type="checkbox" checked class="rounded border-slate-300" />
+                <span>حساب نشط</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input id="admin-t-is-admin" type="checkbox" class="rounded border-slate-300" />
+                <span>صلاحية إدارة</span>
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                onclick="clearAdminTeacherForm()"
+                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 cursor-pointer"
+              >
+                تفريغ الحقول
+              </button>
+              <button
+                type="submit"
+                id="admin-save-teacher-btn"
+                class="px-5 py-2 rounded-xl text-xs font-extrabold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer"
+              >
+                حفظ السجل
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-100 text-slate-700 font-extrabold">
+              <tr>
+                <th class="py-2.5 px-3">المعرّف</th>
+                <th class="py-2.5 px-3">اسم المدرس</th>
+                <th class="py-2.5 px-3">المادة</th>
+                <th class="py-2.5 px-3">الرمز</th>
+                <th class="py-2.5 px-3">الحالة</th>
+                <th class="py-2.5 px-3">تعديل</th>
+              </tr>
+            </thead>
+            <tbody id="admin-teachers-tbody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
 
     </section>
   </main>
@@ -377,7 +452,7 @@
     </div>
   </footer>
 
-  <!-- نافذة قفل الرمز السري للمدرسين -->
+  <!-- نافذة إدخال الرمز السري -->
   <div id="teacher-pin-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
     <form onsubmit="handleTeacherPinSubmit(event)" class="bg-white rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-xl border border-slate-200 space-y-4 animate-fade-in">
       <div class="flex items-center justify-between gap-3">
@@ -396,7 +471,7 @@
       </div>
 
       <p class="text-xs text-slate-600 leading-relaxed">
-        أدخل الرمز السري المخصص للمدرسين للوصول إلى نشر وإدارة التبليغات.
+        أدخل الرمز السري المخصص لحسابك (تُغلق الجلسة تلقائياً بعد 30 دقيقة من الخمول).
       </p>
 
       <div>
@@ -404,7 +479,6 @@
         <input
           id="teacher-pin-input"
           type="password"
-          inputmode="numeric"
           autocomplete="off"
           required
           placeholder="••••"
@@ -487,12 +561,6 @@
         </button>
       </div>
 
-      <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-        يمكنك إدخال <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">SUPABASE_URL</code> و
-        <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">SUPABASE_ANON_KEY</code> هنا لحفظها في المتصفح فوراً، أو تثبيتها مباشرة في كائن <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">SUPABASE_CONFIG</code> داخل الملف قبل الرفع.
-      </p>
-
-      <!-- نموذج حفظ إعدادات Supabase مباشرة -->
       <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3.5 space-y-3">
         <div class="grid grid-cols-1 gap-3">
           <div>
@@ -534,47 +602,6 @@
         </div>
       </div>
 
-      <!-- كود إنشاء الجدول والسياسات في SQL Editor -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-xs font-extrabold text-slate-800">أمر إنشاء جدول <code dir="ltr">announcements</code> والسياسات في SQL Editor:</span>
-          <button
-            type="button"
-            onclick="copySqlSchema()"
-            class="px-3 py-1 rounded-lg text-xs font-bold bg-brand-50 text-brand-800 border border-brand-200 hover:bg-brand-100 cursor-pointer"
-          >
-            نسخ SQL
-          </button>
-        </div>
-        <pre id="supabase-sql-code" dir="ltr" class="text-left text-[11px] sm:text-xs bg-slate-900 text-emerald-300 p-3.5 rounded-xl overflow-x-auto leading-relaxed select-all">create table if not exists public.announcements (
-  id text primary key,
-  grade text not null,
-  section text not null default '',
-  teacher_name text not null default '',
-  subject text not null default '',
-  message text not null,
-  attachment jsonb,
-  created_at timestamptz not null default now()
-);
-
-alter table public.announcements enable row level security;
-
-drop policy if exists "Allow public read announcements" on public.announcements;
-create policy "Allow public read announcements"
-  on public.announcements for select
-  using (true);
-
-drop policy if exists "Allow public insert announcements" on public.announcements;
-create policy "Allow public insert announcements"
-  on public.announcements for insert
-  with check (true);
-
-drop policy if exists "Allow public delete announcements" on public.announcements;
-create policy "Allow public delete announcements"
-  on public.announcements for delete
-  using (true);</pre>
-      </div>
-
       <div class="flex justify-end">
         <button
           type="button"
@@ -588,18 +615,20 @@ create policy "Allow public delete announcements"
   </div>
 
   <script>
-    // ==================== إعدادات Supabase الخفيفة ====================
+    // ==================== إعدادات Supabase والمدة الزمنية للجلسة ====================
     const SUPABASE_CONFIG = {
       SUPABASE_URL: "https://adhxcszvwijpxonnmkdv.supabase.co",
       SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkaHhjc3p2d2lqcHhvbm5ta2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2MTUyMDUsImV4cCI6MjExMTE5MTIwNX0._6F16bEI6yJPZ4lw8qVdWbf7yeRePGzgE_PIn4tDDIk",
-      TABLE_NAME: "announcements"
+      TABLE_NAME: "announcements",
+      COMMENTS_TABLE_NAME: "announcement_comments",
     };
 
+    const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 دقيقة قفل تلقائي عند الخمول
     const SUPABASE_OVERRIDE_KEY = 'mutafawoqeen1_supabase_override_v1';
     const POSTS_STORAGE_KEY = 'mutafawoqeen1_daily_posts_v1';
-    const SHORTCUT_STORAGE_KEY = 'mutafawoqeen1_teacher_shortcut_v1';
+    const COMMENTS_STORAGE_KEY = 'mutafawoqeen1_post_comments_v1';
     const CHILDREN_STORAGE_KEY = 'mutafawoqeen1_parent_shortcuts_v1';
-    const TEACHER_PIN_SESSION_KEY = 'mutafawoqeen1_teacher_pin_v1';
+    const TEACHER_SESSION_KEY = 'mutafawoqeen1_teacher_session_v2';
 
     const GRADES = [
       { id: '1', label: 'الأول', icon: '1️⃣' },
@@ -616,17 +645,17 @@ create policy "Allow public delete announcements"
       parentSection: 'أ',
       teacherGrade: '1',
       teacherSection: 'أ',
-      shortcut: {
-        name: '',
-        subject: '',
-        editing: true,
-      },
       posts: [],
+      commentsByPost: {},
+      openCommentPostIds: {},
       savedChildren: [],
       pendingAttachment: null,
       cloudConnected: false,
-      teacherPin: '',
+      teacherSession: null,
+      adminTeachers: [],
     };
+
+    let idleTimerId = null;
 
     function escapeHtml(str) {
       return String(str ?? '')
@@ -708,6 +737,7 @@ create policy "Allow public delete announcements"
         SUPABASE_URL: url,
         SUPABASE_ANON_KEY: key,
         TABLE_NAME: SUPABASE_CONFIG.TABLE_NAME || 'announcements',
+        COMMENTS_TABLE_NAME: SUPABASE_CONFIG.COMMENTS_TABLE_NAME || 'announcement_comments',
       };
     }
 
@@ -731,10 +761,10 @@ create policy "Allow public delete announcements"
       };
     }
 
-    function getSupabaseEndpoint(query = '') {
+    function getSupabaseTableEndpoint(tableName, query = '') {
       const cfg = getActiveSupabaseConfig();
       const base = cfg.SUPABASE_URL.replace(/\/+$/, '');
-      return `${base}/rest/v1/${cfg.TABLE_NAME}${query}`;
+      return `${base}/rest/v1/${tableName}${query}`;
     }
 
     function getSupabaseRpcEndpoint(fnName) {
@@ -743,29 +773,82 @@ create policy "Allow public delete announcements"
       return `${base}/rest/v1/rpc/${fnName}`;
     }
 
-    // ==================== قفل الرمز السري للمدرسين ====================
-    function loadSavedTeacherPin() {
+    // ==================== إدارة الجلسة والقفل التلقائي بعد 30 دقيقة ====================
+    function clearIdleTimer() {
+      if (idleTimerId) {
+        clearTimeout(idleTimerId);
+        idleTimerId = null;
+      }
+    }
+
+    function saveTeacherSession(sessionObj) {
+      state.teacherSession = sessionObj;
       try {
-        const saved = sessionStorage.getItem(TEACHER_PIN_SESSION_KEY);
-        if (saved) state.teacherPin = saved;
+        sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify(sessionObj));
+      } catch (err) {
+        console.error(err);
+      }
+      scheduleIdleAutoLock();
+    }
+
+    function clearTeacherSession() {
+      state.teacherSession = null;
+      state.adminTeachers = [];
+      clearIdleTimer();
+      try {
+        sessionStorage.removeItem(TEACHER_SESSION_KEY);
       } catch (err) {
         console.error(err);
       }
     }
 
-    function saveTeacherPinSession(pin) {
-      state.teacherPin = pin;
+    function scheduleIdleAutoLock() {
+      clearIdleTimer();
+      if (!state.teacherSession) return;
+      idleTimerId = setTimeout(() => {
+        if (!state.teacherSession) return;
+        clearTeacherSession();
+        showToast('تم قفل وضع المدرس تلقائياً بعد 30 دقيقة من الخمول.', 'info');
+        if (state.mode === 'teacher') {
+          switchMode('parent', true);
+        }
+      }, SESSION_TIMEOUT_MS);
+    }
+
+    function touchTeacherActivity() {
+      if (!state.teacherSession) return;
+      const now = Date.now();
+      if (now - (state.teacherSession.lastActivity || 0) >= SESSION_TIMEOUT_MS) {
+        clearTeacherSession();
+        showToast('انتهت مهلة الجلسة (30 دقيقة)؛ يرجى إدخال الرمز مجدداً.', 'warn');
+        if (state.mode === 'teacher') {
+          switchMode('parent', true);
+        }
+        return;
+      }
+      state.teacherSession.lastActivity = now;
       try {
-        sessionStorage.setItem(TEACHER_PIN_SESSION_KEY, pin);
+        sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify(state.teacherSession));
       } catch (err) {
         console.error(err);
       }
+      scheduleIdleAutoLock();
     }
 
-    function clearTeacherPinSession() {
-      state.teacherPin = '';
+    function loadSavedTeacherSession() {
       try {
-        sessionStorage.removeItem(TEACHER_PIN_SESSION_KEY);
+        const raw = sessionStorage.getItem(TEACHER_SESSION_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.pin) return;
+        if (Date.now() - (parsed.lastActivity || 0) >= SESSION_TIMEOUT_MS) {
+          sessionStorage.removeItem(TEACHER_SESSION_KEY);
+          return;
+        }
+        parsed.lastActivity = Date.now();
+        state.teacherSession = parsed;
+        sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify(parsed));
+        scheduleIdleAutoLock();
       } catch (err) {
         console.error(err);
       }
@@ -784,22 +867,28 @@ create policy "Allow public delete announcements"
       const modal = document.getElementById('teacher-pin-modal');
       modal?.classList.add('hidden');
       modal?.classList.remove('flex');
-      if (returnToParent && !state.teacherPin) {
+      if (returnToParent && !state.teacherSession) {
         switchMode('parent', true);
       }
     }
 
     function lockTeacherSession() {
-      clearTeacherPinSession();
+      clearTeacherSession();
       showToast('تم قفل وضع المدرس.', 'info');
       switchMode('parent', true);
     }
 
     async function verifyPinWithSupabase(pin) {
       if (!isSupabaseConfigured()) {
-        return true;
+        return {
+          pin,
+          id: 'local-teacher',
+          teacherName: 'مدرس المادة',
+          subject: 'واجب يومي',
+          isAdmin: true,
+        };
       }
-      const res = await fetch(getSupabaseRpcEndpoint('verify_teacher_pin'), {
+      const res = await fetch(getSupabaseRpcEndpoint('login_teacher_by_pin'), {
         method: 'POST',
         headers: getSupabaseHeaders(),
         body: JSON.stringify({ p_pin: pin }),
@@ -808,7 +897,15 @@ create policy "Allow public delete announcements"
         throw new Error(`HTTP ${res.status}`);
       }
       const data = await res.json();
-      return Boolean(data);
+      if (!data || !data.id) return null;
+      return {
+        pin,
+        id: String(data.id),
+        teacherName: data.teacher_name || 'مدرس',
+        subject: data.subject || '',
+        isAdmin: Boolean(data.is_admin),
+        lastActivity: Date.now(),
+      };
     }
 
     async function handleTeacherPinSubmit(event) {
@@ -823,24 +920,189 @@ create policy "Allow public delete announcements"
 
       if (btn) btn.disabled = true;
       try {
-        const valid = await verifyPinWithSupabase(pin);
-        if (!valid) {
-          showToast('الرمز السري غير صحيح.', 'error');
+        const sessionObj = await verifyPinWithSupabase(pin);
+        if (!sessionObj) {
+          showToast('الرمز السري غير صحيح أو الحساب غير نشط.', 'error');
           input?.select();
           return;
         }
-        saveTeacherPinSession(pin);
+        saveTeacherSession(sessionObj);
         closeTeacherPinModal(false);
         activateTeacherView();
-        showToast('تم التحقق وفتح وضع المدرس.', 'success');
+        showToast(`مرحباً ${sessionObj.teacherName}`, 'success');
       } catch (err) {
-        console.error('PIN verification error:', err);
+        console.error('PIN login error:', err);
         showToast('تعذّر التحقق من الرمز؛ تأكد من الاتصال بـ Supabase.', 'error');
       } finally {
         if (btn) btn.disabled = false;
       }
     }
 
+    function canManagePost(post) {
+      if (!state.teacherSession) return false;
+      if (state.teacherSession.isAdmin) return true;
+      if (post.teacherId && state.teacherSession.id === post.teacherId) return true;
+      return false;
+    }
+
+    function renderTeacherIdentityBanner() {
+      const badge = document.getElementById('active-teacher-badge');
+      const rolePill = document.getElementById('active-teacher-role-pill');
+      const subjLabel = document.getElementById('default-subject-label');
+      const adminPanel = document.getElementById('admin-teachers-panel');
+
+      if (!state.teacherSession) {
+        adminPanel?.classList.add('hidden');
+        return;
+      }
+
+      if (badge) {
+        badge.textContent = `${state.teacherSession.teacherName}${state.teacherSession.subject ? ` — ${state.teacherSession.subject}` : ''}`;
+      }
+      if (rolePill) {
+        rolePill.textContent = state.teacherSession.isAdmin ? 'صلاحية الإدارة الكاملة' : 'حساب مدرس فردي';
+        rolePill.className = state.teacherSession.isAdmin
+          ? 'px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-extrabold text-xs'
+          : 'px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs';
+      }
+      if (subjLabel) {
+        subjLabel.textContent = state.teacherSession.subject || 'غير محددة';
+      }
+
+      if (state.teacherSession.isAdmin && isSupabaseConfigured()) {
+        adminPanel?.classList.remove('hidden');
+        loadAdminTeachersList();
+      } else {
+        adminPanel?.classList.add('hidden');
+      }
+    }
+
+    // ==================== إدارة جدول المدرسين والرموز للمدير ====================
+    async function loadAdminTeachersList() {
+      if (!state.teacherSession?.isAdmin || !isSupabaseConfigured()) return;
+      try {
+        const res = await fetch(getSupabaseRpcEndpoint('admin_list_teachers'), {
+          method: 'POST',
+          headers: getSupabaseHeaders(),
+          body: JSON.stringify({ p_pin: state.teacherSession.pin }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const rows = await res.json();
+        state.adminTeachers = Array.isArray(rows) ? rows : [];
+        renderAdminTeachersTable();
+      } catch (err) {
+        console.error('Load admin teachers error:', err);
+        showToast('تعذّر جلب قائمة المدرسين.', 'error');
+      }
+    }
+
+    function renderAdminTeachersTable() {
+      const tbody = document.getElementById('admin-teachers-tbody');
+      if (!tbody) return;
+      if (!state.adminTeachers.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-slate-400 font-bold">لا توجد سجلات.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = state.adminTeachers
+        .map(
+          (t) => `
+          <tr class="hover:bg-slate-50/80">
+            <td class="py-2 px-3 font-mono font-bold text-slate-700">${escapeHtml(t.id)}</td>
+            <td class="py-2 px-3 font-bold text-slate-900">${escapeHtml(t.teacher_name)}</td>
+            <td class="py-2 px-3 text-slate-700">${escapeHtml(t.subject || '')}</td>
+            <td class="py-2 px-3 font-mono font-extrabold text-brand-800">${escapeHtml(t.pin)}</td>
+            <td class="py-2 px-3">
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                t.active ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-800'
+              }">
+                ${t.active ? 'نشط' : 'متوقف'}
+              </span>
+            </td>
+            <td class="py-2 px-3">
+              <button
+                type="button"
+                onclick="fillAdminTeacherForm('${escapeHtml(t.id)}')"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-brand-50 hover:bg-brand-100 text-brand-900 border border-brand-200 cursor-pointer"
+              >
+                تعديل
+              </button>
+            </td>
+          </tr>`
+        )
+        .join('');
+    }
+
+    function fillAdminTeacherForm(id) {
+      const found = state.adminTeachers.find((t) => t.id === id);
+      if (!found) return;
+      document.getElementById('admin-t-id').value = found.id || '';
+      document.getElementById('admin-t-name').value = found.teacher_name || '';
+      document.getElementById('admin-t-subject').value = found.subject || '';
+      document.getElementById('admin-t-pin').value = found.pin || '';
+      document.getElementById('admin-t-active').checked = Boolean(found.active);
+      document.getElementById('admin-t-is-admin').checked = Boolean(found.is_admin);
+      document.getElementById('admin-t-name')?.focus();
+    }
+
+    function clearAdminTeacherForm() {
+      document.getElementById('admin-t-id').value = '';
+      document.getElementById('admin-t-name').value = '';
+      document.getElementById('admin-t-subject').value = '';
+      document.getElementById('admin-t-pin').value = '';
+      document.getElementById('admin-t-active').checked = true;
+      document.getElementById('admin-t-is-admin').checked = false;
+    }
+
+    async function handleAdminSaveTeacher(event) {
+      event.preventDefault();
+      if (!state.teacherSession?.isAdmin || !isSupabaseConfigured()) return;
+
+      const id = (document.getElementById('admin-t-id')?.value || '').trim();
+      const teacherName = (document.getElementById('admin-t-name')?.value || '').trim();
+      const subject = (document.getElementById('admin-t-subject')?.value || '').trim();
+      const newPin = (document.getElementById('admin-t-pin')?.value || '').trim();
+      const active = Boolean(document.getElementById('admin-t-active')?.checked);
+      const isAdmin = Boolean(document.getElementById('admin-t-is-admin')?.checked);
+
+      if (!id || !teacherName || !newPin) {
+        showToast('أدخل المعرّف والاسم والرمز السري.', 'warn');
+        return;
+      }
+
+      const btn = document.getElementById('admin-save-teacher-btn');
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch(getSupabaseRpcEndpoint('admin_upsert_teacher'), {
+          method: 'POST',
+          headers: getSupabaseHeaders(),
+          body: JSON.stringify({
+            p_pin: state.teacherSession.pin,
+            p_id: id,
+            p_teacher_name: teacherName,
+            p_subject: subject,
+            p_new_pin: newPin,
+            p_is_admin: isAdmin,
+            p_active: active,
+          }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        showToast('تم حفظ بيانات المدرس بنجاح.', 'success');
+        await loadAdminTeachersList();
+      } catch (err) {
+        console.error('Upsert teacher error:', err);
+        showToast('تعذّر حفظ السجل؛ تأكد من عدم تكرار الرمز السري مع حساب آخر.', 'error');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // ==================== إعدادات المؤشرات والمنشورات والتعليقات ====================
     function updateConnectionIndicators() {
       const banner = document.getElementById('parent-local-banner');
       const pill = document.getElementById('connection-status-pill');
@@ -873,10 +1135,12 @@ create policy "Allow public delete announcements"
         id: String(row.id),
         grade: row.grade || 'GENERAL',
         section: row.section || '',
+        teacherId: row.teacher_id ?? row.teacherId ?? '',
         teacherName: row.teacher_name ?? row.teacherName ?? '',
         subject: row.subject || '',
         message: row.message || '',
         attachment: row.attachment || null,
+        commentsClosed: Boolean(row.comments_closed ?? row.commentsClosed ?? false),
         createdAt: row.created_at ?? row.createdAt ?? new Date().toISOString(),
       };
     }
@@ -894,15 +1158,28 @@ create policy "Allow public delete announcements"
       };
     }
 
+    function normalizeRowToComment(row) {
+      return {
+        id: String(row.id),
+        announcementId: String(row.announcement_id ?? row.announcementId),
+        authorName: row.author_name ?? row.authorName ?? 'ولي أمر',
+        isTeacher: Boolean(row.is_teacher ?? row.isTeacher ?? false),
+        message: row.message || '',
+        createdAt: row.created_at ?? row.createdAt ?? new Date().toISOString(),
+      };
+    }
+
     function createInitialPosts() {
       const items = [
         {
           id: 'gen-1',
           grade: 'GENERAL',
           section: '',
-          teacherName: 'الإدارة',
+          teacherId: 'admin',
+          teacherName: 'إدارة المدرسة',
           subject: 'تعميم عام',
           message: 'أهلاً بكم في صفحة التواصل المدرسي للواجبات اليومية لادارة ثانوية المتفوقين الاولى للبنين. يُرجى إضافة الرابط إلى شاشة الهاتف لسهولة المتابعة.',
+          commentsClosed: false,
           createdAt: '2026-11-25T08:00:00',
           attachment: null,
         },
@@ -910,9 +1187,11 @@ create policy "Allow public delete announcements"
           id: 'gen-2',
           grade: 'GENERAL',
           section: '',
-          teacherName: 'الإدارة',
+          teacherId: 'admin',
+          teacherName: 'إدارة المدرسة',
           subject: 'تعميم عام',
           message: 'يرجى متابعة دفاتر الطلاب يومياً والالتزام بالحضور والمستلزمات المدرسية.',
+          commentsClosed: false,
           createdAt: '2026-11-24T09:00:00',
           attachment: null,
         },
@@ -925,9 +1204,11 @@ create policy "Allow public delete announcements"
             id: `post-${idx++}`,
             grade: g.id,
             section: sec,
+            teacherId: '',
             teacherName: 'مدرس المادة',
             subject: 'واجب يومي',
             message: `متابعة الدرس اليومي للصف ${g.label} — شعبة (${sec}) وحل التمارين المطلوبة في الدفتر.`,
+            commentsClosed: false,
             createdAt: '2026-11-25T10:00:00',
             attachment: null,
           });
@@ -942,14 +1223,68 @@ create policy "Allow public delete announcements"
         localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(state.posts));
       } catch (err) {
         console.error(err);
-        showToast('تعذّر الحفظ محلياً؛ قد تكون مساحة المتصفح ممتلئة.', 'error');
+      }
+    }
+
+    function saveCommentsLocal() {
+      try {
+        localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(state.commentsByPost));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function groupCommentsList(rows) {
+      const map = {};
+      (rows || []).forEach((r) => {
+        const c = normalizeRowToComment(r);
+        if (!map[c.announcementId]) map[c.announcementId] = [];
+        map[c.announcementId].push(c);
+      });
+      Object.keys(map).forEach((k) => {
+        map[k].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      });
+      return map;
+    }
+
+    async function loadCommentsFromSource() {
+      const cfg = getActiveSupabaseConfig();
+      if (isSupabaseConfigured()) {
+        try {
+          const res = await fetch(
+            getSupabaseTableEndpoint(cfg.COMMENTS_TABLE_NAME, '?select=*&order=created_at.asc'),
+            {
+              method: 'GET',
+              headers: getSupabaseHeaders(),
+            }
+          );
+          if (res.ok) {
+            const rows = await res.json();
+            state.commentsByPost = groupCommentsList(rows);
+            saveCommentsLocal();
+            return;
+          }
+        } catch (err) {
+          console.error('Comments fetch error:', err);
+        }
+      }
+
+      try {
+        const raw = localStorage.getItem(COMMENTS_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') state.commentsByPost = parsed;
+        }
+      } catch (err) {
+        console.error(err);
       }
     }
 
     async function loadPostsFromSource() {
+      const cfg = getActiveSupabaseConfig();
       if (isSupabaseConfigured()) {
         try {
-          const res = await fetch(getSupabaseEndpoint('?select=*&order=created_at.desc'), {
+          const res = await fetch(getSupabaseTableEndpoint(cfg.TABLE_NAME, '?select=*&order=created_at.desc'), {
             method: 'GET',
             headers: getSupabaseHeaders(),
           });
@@ -960,6 +1295,7 @@ create policy "Allow public delete announcements"
           state.posts = Array.isArray(rows) ? rows.map(normalizeRowToPost) : [];
           state.cloudConnected = true;
           savePostsLocal();
+          await loadCommentsFromSource();
           updateConnectionIndicators();
           return;
         } catch (err) {
@@ -985,6 +1321,7 @@ create policy "Allow public delete announcements"
         state.posts = createInitialPosts();
       }
 
+      await loadCommentsFromSource();
       updateConnectionIndicators();
     }
 
@@ -992,7 +1329,7 @@ create policy "Allow public delete announcements"
       await loadPostsFromSource();
       renderParentView();
       renderManageList();
-      showToast('تم تحديث التبليغات.', 'info');
+      showToast('تم تحديث التبليغات والتعليقات.', 'info');
     }
 
     async function persistNewPost(post) {
@@ -1002,14 +1339,14 @@ create policy "Allow public delete announcements"
             method: 'POST',
             headers: getSupabaseHeaders(),
             body: JSON.stringify({
-              p_pin: state.teacherPin,
+              p_pin: state.teacherSession?.pin || '',
               p_payload: serializePostToRow(post),
             }),
           });
           if (!res.ok) {
             const errText = await res.text();
             if (errText.includes('INVALID_TEACHER_PIN') || res.status === 401 || res.status === 403) {
-              clearTeacherPinSession();
+              clearTeacherSession();
               showToast('انتهت صلاحية الرمز السري؛ يرجى إدخاله مجدداً.', 'warn');
               openTeacherPinModal();
               return false;
@@ -1046,22 +1383,29 @@ create policy "Allow public delete announcements"
             method: 'POST',
             headers: getSupabaseHeaders(),
             body: JSON.stringify({
-              p_pin: state.teacherPin,
+              p_pin: state.teacherSession?.pin || '',
               p_id: String(postId),
             }),
           });
           if (!res.ok) {
             const errText = await res.text();
             if (errText.includes('INVALID_TEACHER_PIN') || res.status === 401 || res.status === 403) {
-              clearTeacherPinSession();
+              clearTeacherSession();
               showToast('انتهت صلاحية الرمز السري؛ يرجى إدخاله مجدداً.', 'warn');
               openTeacherPinModal();
               return false;
             }
             throw new Error(`HTTP ${res.status}`);
           }
+          const deletedOk = await res.json();
+          if (deletedOk === false) {
+            showToast('لا تملك صلاحية حذف هذا التبليغ؛ يُسمح لصاحبه أو الإدارة فقط.', 'warn');
+            return false;
+          }
           state.posts = state.posts.filter((x) => x.id !== postId);
+          delete state.commentsByPost[postId];
           savePostsLocal();
+          saveCommentsLocal();
           state.cloudConnected = true;
           updateConnectionIndicators();
           return true;
@@ -1075,72 +1419,187 @@ create policy "Allow public delete announcements"
       }
 
       state.posts = state.posts.filter((x) => x.id !== postId);
+      delete state.commentsByPost[postId];
       savePostsLocal();
+      saveCommentsLocal();
       return true;
     }
 
-    // ==================== اختصار المدرس والمادة ====================
-    function loadShortcut() {
-      try {
-        const raw = localStorage.getItem(SHORTCUT_STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && (parsed.name || parsed.subject)) {
-            state.shortcut = {
-              name: parsed.name || '',
-              subject: parsed.subject || '',
-              editing: false,
-            };
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      }
-      renderShortcutUI();
+    // ==================== نظام التعليقات والاستفسارات القصيرة ====================
+    function toggleCommentDrawer(postId) {
+      state.openCommentPostIds[postId] = !state.openCommentPostIds[postId];
+      renderParentView();
     }
 
-    function renderShortcutUI() {
-      const displayBox = document.getElementById('shortcut-display');
-      const editBox = document.getElementById('shortcut-edit');
-      const nameDisp = document.getElementById('shortcut-name-display');
-      const subjDisp = document.getElementById('shortcut-subject-display');
-      const nameInput = document.getElementById('teacher-name-input');
-      const subjInput = document.getElementById('teacher-subject-input');
+    async function handleAddComment(event, postId) {
+      event.preventDefault();
+      const post = state.posts.find((p) => p.id === postId);
+      if (!post) return;
 
-      if (nameInput) nameInput.value = state.shortcut.name;
-      if (subjInput) subjInput.value = state.shortcut.subject;
+      const authorInput = document.getElementById(`comment-author-${postId}`);
+      const msgInput = document.getElementById(`comment-msg-${postId}`);
+      const message = (msgInput?.value || '').trim();
 
-      if (!state.shortcut.editing && (state.shortcut.name || state.shortcut.subject)) {
-        displayBox?.classList.remove('hidden');
-        editBox?.classList.add('hidden');
-        if (nameDisp) nameDisp.textContent = state.shortcut.name || 'غير محدد';
-        if (subjDisp) subjDisp.textContent = state.shortcut.subject || 'غير محدد';
-      } else {
-        displayBox?.classList.add('hidden');
-        editBox?.classList.remove('hidden');
-      }
-    }
-
-    function saveTeacherShortcut() {
-      const name = (document.getElementById('teacher-name-input')?.value || '').trim();
-      const subject = (document.getElementById('teacher-subject-input')?.value || '').trim();
-      if (!name && !subject) {
-        showToast('اكتب اسم المدرس أو المادة أولاً.', 'warn');
+      if (!message) {
+        showToast('اكتب نص الاستفسار أو التعليق أولاً.', 'warn');
         return;
       }
-      state.shortcut = { name, subject, editing: false };
-      try {
-        localStorage.setItem(SHORTCUT_STORAGE_KEY, JSON.stringify({ name, subject }));
-      } catch (err) {
-        console.error(err);
+      if (message.length > 250) {
+        showToast('الحد الأقصى للتعليق القصير 250 حرفاً.', 'warn');
+        return;
       }
-      renderShortcutUI();
-      showToast('تم حفظ اختصار المدرس والمادة.', 'success');
+
+      const commentId = `cmt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const cfg = getActiveSupabaseConfig();
+
+      if (state.teacherSession && isSupabaseConfigured()) {
+        try {
+          const res = await fetch(getSupabaseRpcEndpoint('add_teacher_comment_secure'), {
+            method: 'POST',
+            headers: getSupabaseHeaders(),
+            body: JSON.stringify({
+              p_pin: state.teacherSession.pin,
+              p_id: commentId,
+              p_announcement_id: postId,
+              p_message: message,
+            }),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const row = await res.json();
+          const created = normalizeRowToComment(row);
+          if (!state.commentsByPost[postId]) state.commentsByPost[postId] = [];
+          state.commentsByPost[postId].push(created);
+          saveCommentsLocal();
+          if (msgInput) msgInput.value = '';
+          state.openCommentPostIds[postId] = true;
+          renderParentView();
+          showToast('تم إضافة رد المدرس.', 'success');
+          return;
+        } catch (err) {
+          console.error('Teacher comment error:', err);
+          showToast('تعذّر إرسال رد المدرس.', 'error');
+          return;
+        }
+      }
+
+      if (post.commentsClosed) {
+        showToast('التعليقات مغلقة على هذا التبليغ.', 'warn');
+        return;
+      }
+
+      const studentName = (authorInput?.value || '').trim() || 'ولي أمر';
+      const newComment = {
+        id: commentId,
+        announcementId: postId,
+        authorName: studentName,
+        isTeacher: false,
+        message,
+        createdAt: new Date().toISOString(),
+      };
+
+      if (isSupabaseConfigured()) {
+        try {
+          const res = await fetch(getSupabaseTableEndpoint(cfg.COMMENTS_TABLE_NAME), {
+            method: 'POST',
+            headers: getSupabaseHeaders(),
+            body: JSON.stringify({
+              id: newComment.id,
+              announcement_id: newComment.announcementId,
+              author_name: newComment.authorName,
+              is_teacher: false,
+              message: newComment.message,
+              created_at: newComment.createdAt,
+            }),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        } catch (err) {
+          console.error('Parent comment insert error:', err);
+          showToast('تعذّر إرسال التعليق؛ قد تكون التعليقات مغلقة.', 'error');
+          return;
+        }
+      }
+
+      if (!state.commentsByPost[postId]) state.commentsByPost[postId] = [];
+      state.commentsByPost[postId].push(newComment);
+      saveCommentsLocal();
+      if (msgInput) msgInput.value = '';
+      state.openCommentPostIds[postId] = true;
+      renderParentView();
+      showToast('تم إرسال استفسارك بنجاح.', 'success');
     }
 
-    function editTeacherShortcut() {
-      state.shortcut.editing = true;
-      renderShortcutUI();
+    async function handleDeleteComment(postId, commentId) {
+      if (!state.teacherSession) {
+        openTeacherPinModal();
+        return;
+      }
+      if (isSupabaseConfigured()) {
+        try {
+          const res = await fetch(getSupabaseRpcEndpoint('delete_comment_secure'), {
+            method: 'POST',
+            headers: getSupabaseHeaders(),
+            body: JSON.stringify({
+              p_pin: state.teacherSession.pin,
+              p_comment_id: commentId,
+            }),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const ok = await res.json();
+          if (!ok) {
+            showToast('لا تملك صلاحية حذف تعليقات هذا التبليغ.', 'warn');
+            return;
+          }
+        } catch (err) {
+          console.error('Delete comment error:', err);
+          showToast('تعذّر حذف التعليق.', 'error');
+          return;
+        }
+      }
+
+      state.commentsByPost[postId] = (state.commentsByPost[postId] || []).filter((c) => c.id !== commentId);
+      saveCommentsLocal();
+      renderParentView();
+      showToast('تم حذف التعليق.', 'info');
+    }
+
+    async function handleToggleCommentsClosed(postId) {
+      const post = state.posts.find((p) => p.id === postId);
+      if (!post) return;
+      if (!state.teacherSession) {
+        openTeacherPinModal();
+        return;
+      }
+      const nextClosed = !post.commentsClosed;
+
+      if (isSupabaseConfigured()) {
+        try {
+          const res = await fetch(getSupabaseRpcEndpoint('toggle_comments_closed_secure'), {
+            method: 'POST',
+            headers: getSupabaseHeaders(),
+            body: JSON.stringify({
+              p_pin: state.teacherSession.pin,
+              p_announcement_id: postId,
+              p_closed: nextClosed,
+            }),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const ok = await res.json();
+          if (!ok) {
+            showToast('لا تملك صلاحية تعديل حالة التعليقات لهذا التبليغ.', 'warn');
+            return;
+          }
+        } catch (err) {
+          console.error('Toggle comments error:', err);
+          showToast('تعذّر تحديث حالة التعليقات.', 'error');
+          return;
+        }
+      }
+
+      post.commentsClosed = nextClosed;
+      savePostsLocal();
+      renderParentView();
+      renderManageList();
+      showToast(nextClosed ? 'تم إغلاق التعليقات على هذا التبليغ.' : 'تم فتح التعليقات على هذا التبليغ.', 'info');
     }
 
     // ==================== اختصارات ولي الأمر للشعب ====================
@@ -1227,7 +1686,7 @@ create policy "Allow public delete announcements"
         .join('');
     }
 
-    // ==================== التبديل بين واجهة ولي الأمر والمدرس ====================
+    // ==================== التبديل بين الواجهتين ====================
     function activateTeacherView() {
       state.mode = 'teacher';
       const parentView = document.getElementById('parent-view');
@@ -1241,13 +1700,16 @@ create policy "Allow public delete announcements"
       tabTeacher?.classList.remove('text-slate-600');
       tabParent?.classList.remove('bg-brand-700', 'text-white', 'shadow-xs');
       tabParent?.classList.add('text-slate-600');
+
+      renderTeacherIdentityBanner();
       renderTeacherButtons();
       renderManageList();
     }
 
     function switchMode(mode, force = false) {
       if (mode === 'teacher') {
-        if (!force && isSupabaseConfigured() && !state.teacherPin) {
+        touchTeacherActivity();
+        if (!force && isSupabaseConfigured() && !state.teacherSession) {
           openTeacherPinModal();
           return;
         }
@@ -1373,7 +1835,113 @@ create policy "Allow public delete announcements"
       }
     }
 
-    // ==================== عرض المنشورات ====================
+    // ==================== عرض المنشورات والتعليقات ====================
+    function renderCommentsBox(post) {
+      const comments = state.commentsByPost[post.id] || [];
+      const isOpen = Boolean(state.openCommentPostIds[post.id]);
+      const allowDeleteComment = canManagePost(post);
+
+      const itemsHtml = comments.length
+        ? comments
+            .map(
+              (c) => `
+              <div class="rounded-xl p-2.5 text-xs border flex items-start justify-between gap-2 ${
+                c.isTeacher
+                  ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
+                  : 'bg-slate-50 border-slate-200 text-slate-800'
+              }">
+                <div class="min-w-0 space-y-0.5">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="font-extrabold">${escapeHtml(c.authorName)}</span>
+                    ${
+                      c.isTeacher
+                        ? '<span class="px-1.5 py-0.2 rounded bg-emerald-700 text-white text-[10px] font-bold">مدرس</span>'
+                        : ''
+                    }
+                    <span class="text-[10px] text-slate-400">${escapeHtml(formatDateTime(c.createdAt))}</span>
+                  </div>
+                  <p class="leading-relaxed whitespace-pre-line">${escapeHtml(c.message)}</p>
+                </div>
+                ${
+                  allowDeleteComment
+                    ? `<button
+                         type="button"
+                         onclick="handleDeleteComment('${escapeHtml(post.id)}', '${escapeHtml(c.id)}')"
+                         title="حذف التعليق"
+                         class="text-[11px] font-bold text-rose-600 hover:text-rose-800 px-1.5 py-0.5 rounded hover:bg-rose-50 cursor-pointer shrink-0"
+                       >
+                         حذف
+                       </button>`
+                    : ''
+                }
+              </div>`
+            )
+            .join('')
+        : '<p class="text-xs text-slate-400">لا توجد تعليقات أو استفسارات بعد.</p>';
+
+      const formHtml =
+        post.commentsClosed && !state.teacherSession
+          ? '<div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-900">التعليقات مغلقة على هذا التبليغ.</div>'
+          : `<form onsubmit="handleAddComment(event, '${escapeHtml(post.id)}')" class="space-y-2 pt-1">
+               ${
+                 state.teacherSession
+                   ? ''
+                   : `<input
+                        id="comment-author-${escapeHtml(post.id)}"
+                        type="text"
+                        maxlength="60"
+                        placeholder="اسم الطالب أو ولي الأمر (اختياري)"
+                        class="w-full sm:w-64 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:outline-none focus:border-brand-600"
+                      />`
+               }
+               <div class="flex items-center gap-2">
+                 <input
+                   id="comment-msg-${escapeHtml(post.id)}"
+                   type="text"
+                   maxlength="250"
+                   required
+                   placeholder="${state.teacherSession ? 'اكتب رداً مختصراً باسمك كمدرس...' : 'اكتب استفساراً قصيراً (حتى 250 حرفاً)...'}"
+                   class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none focus:border-brand-600"
+                 />
+                 <button
+                   type="submit"
+                   class="px-4 py-2 rounded-xl text-xs font-extrabold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer shrink-0"
+                 >
+                   إرسال
+                 </button>
+               </div>
+             </form>`;
+
+      return `
+        <div class="pt-2.5 mt-2.5 border-t border-slate-100 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onclick="toggleCommentDrawer('${escapeHtml(post.id)}')"
+              class="inline-flex items-center gap-1.5 text-xs font-extrabold text-brand-800 hover:text-brand-950 cursor-pointer"
+            >
+              <span>💬</span>
+              <span>استفسارات وتعليقات (${comments.length})</span>
+              <span>${isOpen ? '▲' : '▼'}</span>
+            </button>
+            ${
+              post.commentsClosed
+                ? '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-[11px] font-bold">مغلق</span>'
+                : ''
+            }
+          </div>
+
+          ${
+            isOpen
+              ? `<div class="space-y-2 pt-1">
+                   <div class="space-y-1.5 max-h-60 overflow-y-auto">${itemsHtml}</div>
+                   ${formHtml}
+                 </div>`
+              : ''
+          }
+        </div>`;
+    }
+
     function renderPostCard(post) {
       const targetLabel = formatTargetLabel(post);
       const dt = formatDateTime(post.createdAt);
@@ -1418,6 +1986,7 @@ create policy "Allow public delete announcements"
           </div>
           <p class="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line pt-1">${escapeHtml(post.message)}</p>
           ${attachmentHtml}
+          ${renderCommentsBox(post)}
         </article>`;
     }
 
@@ -1460,30 +2029,49 @@ create policy "Allow public delete announcements"
       }
 
       listEl.innerHTML = state.posts
-        .map(
-          (p) => `
-          <div class="flex items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-            <div class="min-w-0 space-y-1">
-              <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
-                <span class="px-2 py-0.5 rounded bg-brand-100 text-brand-900">${escapeHtml(formatTargetLabel(p))}</span>
-                ${p.subject ? `<span class="text-slate-700">${escapeHtml(p.subject)}</span>` : ''}
-                ${p.teacherName ? `<span class="text-slate-500">• ${escapeHtml(p.teacherName)}</span>` : ''}
+        .map((p) => {
+          const allowed = canManagePost(p);
+          return `
+            <div class="flex flex-wrap sm:flex-nowrap items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+              <div class="min-w-0 space-y-1">
+                <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
+                  <span class="px-2 py-0.5 rounded bg-brand-100 text-brand-900">${escapeHtml(formatTargetLabel(p))}</span>
+                  ${p.subject ? `<span class="text-slate-700">${escapeHtml(p.subject)}</span>` : ''}
+                  ${p.teacherName ? `<span class="text-slate-500">• ${escapeHtml(p.teacherName)}</span>` : ''}
+                  <span class="px-1.5 py-0.5 rounded text-[10px] ${
+                    p.commentsClosed ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900'
+                  }">
+                    ${p.commentsClosed ? 'التعليقات مغلقة' : 'التعليقات مفتوحة'}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-800 line-clamp-2">${escapeHtml(p.message)}</p>
               </div>
-              <p class="text-xs text-slate-800 line-clamp-2">${escapeHtml(p.message)}</p>
-            </div>
-            <button
-              type="button"
-              onclick="handleDeletePost('${escapeHtml(p.id)}')"
-              class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shrink-0 cursor-pointer"
-            >
-              حذف
-            </button>
-          </div>`
-        )
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${
+                  allowed
+                    ? `<button
+                         type="button"
+                         onclick="handleToggleCommentsClosed('${escapeHtml(p.id)}')"
+                         class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 cursor-pointer"
+                       >
+                         ${p.commentsClosed ? 'فتح التعليقات' : 'إغلاق التعليقات'}
+                       </button>
+                       <button
+                         type="button"
+                         onclick="handleDeletePost('${escapeHtml(p.id)}')"
+                         class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer"
+                       >
+                         حذف
+                       </button>`
+                    : '<span class="text-[11px] font-semibold text-slate-400 px-2">منشور زميل</span>'
+                }
+              </div>
+            </div>`;
+        })
         .join('');
     }
 
-    // ==================== ضغط الصور والمرفقات ====================
+    // ==================== ضغط الصور والنشر والحذف ====================
     function compressImageFile(file, maxWidth = 1000, quality = 0.72) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1536,9 +2124,7 @@ create policy "Allow public delete announcements"
         try {
           const compressed = await compressImageFile(file, 1000, 0.72);
           state.pendingAttachment = compressed;
-          if (infoEl) {
-            infoEl.textContent = `تم تجهيز الصورة وضغطها تلقائياً: ${file.name}`;
-          }
+          if (infoEl) infoEl.textContent = `تم تجهيز الصورة وضغطها تلقائياً: ${file.name}`;
           clearBtn?.classList.remove('hidden');
         } catch (err) {
           console.error(err);
@@ -1572,13 +2158,17 @@ create policy "Allow public delete announcements"
 
     function resetTeacherForm() {
       const msgEl = document.getElementById('teacher-message');
+      const subjOverride = document.getElementById('teacher-subject-override');
       if (msgEl) msgEl.value = '';
+      if (subjOverride) subjOverride.value = '';
       clearAttachment();
     }
 
     async function handleTeacherSubmit(event) {
       event.preventDefault();
-      if (isSupabaseConfigured() && !state.teacherPin) {
+      touchTeacherActivity();
+
+      if (isSupabaseConfigured() && !state.teacherSession) {
         openTeacherPinModal();
         return;
       }
@@ -1590,22 +2180,23 @@ create policy "Allow public delete announcements"
         return;
       }
 
-      const nameInputVal = (document.getElementById('teacher-name-input')?.value || '').trim();
-      const subjInputVal = (document.getElementById('teacher-subject-input')?.value || '').trim();
-      const teacherName = state.shortcut.name || nameInputVal || 'مدرس المادة';
+      const overrideSubj = (document.getElementById('teacher-subject-override')?.value || '').trim();
+      const teacherName = state.teacherSession?.teacherName || 'مدرس المادة';
       const subject =
-        state.teacherGrade === 'GENERAL'
-          ? state.shortcut.subject || subjInputVal || 'تعميم عام'
-          : state.shortcut.subject || subjInputVal || 'واجب يومي';
+        overrideSubj ||
+        state.teacherSession?.subject ||
+        (state.teacherGrade === 'GENERAL' ? 'تعميم عام' : 'واجب يومي');
 
       const post = {
         id: `post-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         grade: state.teacherGrade,
         section: state.teacherGrade === 'GENERAL' ? '' : state.teacherSection,
+        teacherId: state.teacherSession?.id || '',
         teacherName,
         subject,
         message,
         attachment: state.pendingAttachment,
+        commentsClosed: false,
         createdAt: new Date().toISOString(),
       };
 
@@ -1624,7 +2215,8 @@ create policy "Allow public delete announcements"
     }
 
     async function handleDeletePost(postId) {
-      if (isSupabaseConfigured() && !state.teacherPin) {
+      touchTeacherActivity();
+      if (isSupabaseConfigured() && !state.teacherSession) {
         openTeacherPinModal();
         return;
       }
@@ -1693,7 +2285,7 @@ create policy "Allow public delete announcements"
         showToast('تم الاتصال بـ Supabase وتفعيل المزامنة بنجاح.', 'success');
         closeDbSetupModal();
       } else {
-        showToast('تم حفظ البيانات؛ تحقق من جدول announcements وصلاحياته في Supabase.', 'warn');
+        showToast('تم حفظ البيانات؛ تحقق من الجداول والدوال في Supabase.', 'warn');
       }
     }
 
@@ -1711,19 +2303,16 @@ create policy "Allow public delete announcements"
       showToast('تمت العودة إلى الوضع المحلي.', 'info');
     }
 
-    function copySqlSchema() {
-      const sql = document.getElementById('supabase-sql-code')?.textContent || '';
-      if (!sql) return;
-      navigator.clipboard?.writeText(sql).then(
-        () => showToast('تم نسخ أمر SQL.', 'success'),
-        () => showToast('حدّد الكود وانسخه يدوياً.', 'info')
-      );
+    function bindActivityListeners() {
+      ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach((evt) => {
+        window.addEventListener(evt, touchTeacherActivity, { passive: true });
+      });
     }
 
     // ==================== التهيئة الأولية ====================
     async function initApp() {
-      loadSavedTeacherPin();
-      loadShortcut();
+      loadSavedTeacherSession();
+      bindActivityListeners();
       loadSavedChildren();
       renderParentButtons();
       renderTeacherButtons();
