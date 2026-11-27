@@ -1282,23 +1282,19 @@
     }
 
     async function resolveAccountByPin(pin) {
-      const localMatch = state.teacherAccounts.find(
-        (acc) => String(acc.pin || "").trim() === pin && acc.active !== false
-      );
-      if (localMatch && localMatch.id === SUPER_ADMIN_ID) {
-        return localMatch;
-      }
-
       try {
-        const res = await sbRpc("login_by_pin", { p_pin: pin });
+        const res = await sbRpc("login_teacher_by_pin", { p_pin: pin });
         const row = Array.isArray(res) ? res[0] : res;
         if (row && row.id && row.active !== false) {
           return row;
         }
       } catch (_) {}
 
-      return localMatch || null;
+      return state.teacherAccounts.find(
+        (acc) => String(acc.pin || "").trim() === pin && acc.active !== false
+      ) || null;
     }
+
 
     async function handleLogin() {
       const pin = document.getElementById("loginPinInput").value.trim();
