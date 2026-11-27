@@ -1,4 +1,4 @@
-const CACHE_NAME = "motafawiqeen-shell-v1";
+const CACHE_NAME = "motafawiqeen-shell-v2";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
@@ -22,9 +22,8 @@ self.addEventListener("activate", (event) => {
           .filter((key) => key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       )
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
@@ -32,19 +31,42 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
-  // عدم تخزين بيانات Supabase مؤقتاً لضمان حداثة التبليغات والتعليقات
+
+  // عدم تخزين طلبات Supabase نهائياً
   if (url.hostname.includes("supabase.co")) {
     return;
   }
 
-  if (req.mode === "navigate") {
+  const isHtmlOrManifest =
+    req.mode === "navigate" ||
+    url.pathname.endsWith("/") ||
+    url.pathname.endsWith("/index.html") ||
+    url.pathname.endsWith("/manifest.json");
+
+  if (isHtmlOrManifest) {
     event.respondWith(
-      fetch(req).catch(() => caches.match("./index.html"))
+      fetch(req)
+        .then((res) => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() => caches.match(req).then((cached) => cached || caches.match("./index.html")))
     );
     return;
   }
 
   event.respondWith(
-    caches.match(req).then((cached) => cached || fetch(req))
+    fetch(req)
+      .then((res) => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        }
+        return res;
+      })
+      .catch(() => caches.match(req))
   );
 });
