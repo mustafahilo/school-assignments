@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>منصة التواصل المدرسي | ثانوية المتفوقين الأولى للبنين</title>
-<link rel="manifest" href="./manifest.json" />
-<meta name="theme-color" content="#1d4ed8" />
-<link rel="apple-touch-icon" href="./icon-192.png" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#1d4ed8" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -569,7 +569,6 @@
 
     <!-- ==================== واجهة ولي الأمر ==================== -->
     <section id="parentView">
-      <!-- بطاقة تعريف ولي الأمر (تظهر عند أول دخول أو عند التعديل) -->
       <div id="guardianSetupCard" class="card">
         <div class="card-title">
           <span>تعريف ولي الأمر واختيار مرحلة وشعبة الأبناء</span>
@@ -595,7 +594,6 @@
         <div id="guardianSetupFeedback"></div>
       </div>
 
-      <!-- المحتوى المخصص لولي الأمر بعد التعريف -->
       <div id="guardianContentArea" class="hidden">
         <div class="guardian-welcome-banner">
           <div>
@@ -610,7 +608,6 @@
           </div>
         </div>
 
-        <!-- القسم العلوي: تبليغات صفوف وشعب الأبناء فقط -->
         <div class="card">
           <div class="card-title">
             <span id="parentChildrenPostsHeading">تبليغات صفوف أبنائي</span>
@@ -620,7 +617,6 @@
           <div id="parentChildrenPosts" class="post-list"></div>
         </div>
 
-        <!-- القسم السفلي: التعميمات العامة والنقاشات مع الإدارة -->
         <div class="card">
           <div class="card-title">
             <span>التعميمات العامة والنقاشات مع الإدارة</span>
@@ -633,7 +629,6 @@
 
     <!-- ==================== واجهة المدرس والإدارة ==================== -->
     <section id="teacherView" class="hidden">
-      <!-- نموذج تسجيل الدخول بالرمز السري فقط -->
       <div id="loginCard" class="card">
         <div class="card-title">
           <span>تسجيل دخول المدرسين والإدارة</span>
@@ -658,7 +653,6 @@
         <div id="loginFeedback"></div>
       </div>
 
-      <!-- لوحة العمل بعد تسجيل الدخول -->
       <div id="dashboardArea" class="hidden">
         <div class="session-bar">
           <div>
@@ -669,7 +663,6 @@
           <button class="btn btn-soft btn-sm" type="button" onclick="handleLogout('تم تسجيل الخروج بنجاح.')">تسجيل الخروج</button>
         </div>
 
-        <!-- نشر تبليغ جديد -->
         <div class="card">
           <div class="card-title">
             <span>نشر تبليغ أو تعميم / نقاش جديد</span>
@@ -704,7 +697,6 @@
           </div>
         </div>
 
-        <!-- قائمة التبليغات المنشورة -->
         <div class="card">
           <div class="card-title">
             <span>التبليغات النشطة الحالية</span>
@@ -719,11 +711,11 @@
           <div id="teacherPostsList" class="post-list"></div>
         </div>
 
-        <!-- لوحة إدارة حسابات المدرسين والرموز (تظهر للإدارة فقط) -->
+        <!-- لوحة إدارة حسابات المدرسين والرموز (تظهر لمدير النظام فقط) -->
         <div id="adminPanelCard" class="card hidden">
           <div class="card-title">
             <span>إدارة حسابات المدرسين والرموز السرية (50 حساباً)</span>
-            <span class="badge badge-general">صلاحية الإدارة</span>
+            <span class="badge badge-general">صلاحية مدير النظام</span>
           </div>
 
           <div class="grid-3" style="margin-bottom: 14px;">
@@ -787,9 +779,6 @@
   </div>
 
   <script>
-    // =========================================================================
-    // إعدادات النظام وقاعدة البيانات (Supabase)
-    // =========================================================================
     const SUPABASE_URL = "https://wuxoxeknhahvxexkssrx.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eG94ZWtuaGFodnhleGtzc3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MTY4NzUsImV4cCI6MjA4NzM5Mjg3NX0.119X5nZ48r7w4R3_a4tJryEHQ9uP9p98_jB5m8b0b3M";
 
@@ -802,21 +791,25 @@
     const MAX_GUARDIAN_CHILDREN = 3;
     const GUARDIAN_PROFILE_KEY = "motafawiqeen_guardian_profile_v2";
 
-    const FALLBACK_ACCOUNTS = [
-      { id: "admin", teacher_name: "الإدارة المدرسية", subject: "الإدارة", pin: "990001", is_admin: true, active: true },
-      ...Array.from({ length: 50 }, (_, idx) => {
-        const num = String(idx + 1).padStart(2, "0");
-        return {
-          id: `t-${num}`,
-          teacher_name: `مدرس ${num}`,
-          subject: "مادة دراسية",
-          pin: `10${num}`,
-          is_admin: false,
-          active: true
-        };
-      })
-    ];
+    // مدير النظام (أنت) يمتلك صلاحية لوحة الحسابات، بينما الإدارة المدرسية (admin) تنشر وتناقش فقط
+    const SUPER_ADMIN_ID = "superadmin";
+    const SCHOOL_ADMIN_ID = "admin";
 
+    const FALLBACK_ACCOUNTS = [
+  { id: SCHOOL_ADMIN_ID, teacher_name: "الإدارة المدرسية", subject: "الإدارة", pin: "990001", is_system_admin: false, is_admin: false, active: true },
+  ...Array.from({ length: 50 }, (_, idx) => {
+    const num = String(idx + 1).padStart(2, "0");
+    return {
+      id: `t-${num}`,
+      teacher_name: `مدرس ${num}`,
+      subject: "مادة دراسية",
+      pin: `10${num}`,
+      is_system_admin: false,
+      is_admin: false,
+      active: true
+    };
+  })
+];
     const state = {
       mode: "parent",
       postGrade: "الأول",
@@ -824,19 +817,27 @@
       posts: [],
       commentsByPost: {},
       openComments: {},
-      guardianChildren: [], // [{ name, grade, section }]
+      guardianChildren: [],
       guardianDraftChildren: [],
       isEditingGuardian: false,
-      activeChildFilterIndex: "ALL", // "ALL" أو رقم الطالب (0, 1, 2)
+      activeChildFilterIndex: "ALL",
       teacherAccounts: [...FALLBACK_ACCOUNTS],
-      session: null, // { id, name, subject, isAdmin, expiresAt }
+      session: null,
       idleTimer: null,
       countdownTimer: null
     };
 
-    // =========================================================================
-    // إدارة ملف ولي الأمر وحفظ الأبناء (من 1 إلى 3 مع الصف والشعبة لكل طالب)
-    // =========================================================================
+    function isSystemAdminAccount(acc) {
+      if (!acc) return false;
+      if (acc.id === SUPER_ADMIN_ID || acc.is_system_admin || acc.isSystemAdmin) return true;
+      // إذا كان حساب admin هو نفسه مدير النظام في قاعدة البيانات، نسمح فقط إذا لم يوجد حساب superadmin منفصل
+      if (acc.id === SCHOOL_ADMIN_ID && acc.is_admin) {
+        const hasDedicatedSuperAdmin = state.teacherAccounts.some((t) => t.id === SUPER_ADMIN_ID);
+        return !hasDedicatedSuperAdmin;
+      }
+      return false;
+    }
+
     function cleanStudentName(raw) {
       return String(raw || "")
         .replace(/^ولي\s*أمر\s*(الطالب|الطلاب)\s*[:：\-–]*\s*/i, "")
@@ -1073,9 +1074,6 @@
       renderParentListsOnly();
     }
 
-    // =========================================================================
-    // دوال مساعدة للتاريخ والمدة (7 أيام للتبليغات اليومية، والتعميمات العامة تبقى)
-    // =========================================================================
     function isDailyPostExpired(post) {
       if (!post || post.grade === "GENERAL") return false;
       const createdTime = Date.parse(post.created_at || post.createdAt || "");
@@ -1109,9 +1107,6 @@
         .replace(/'/g, "&#39;");
     }
 
-    // =========================================================================
-    // استدعاءات Supabase REST و RPC
-    // =========================================================================
     async function sbRest(path, options = {}) {
       const headers = {
         "apikey": SUPABASE_ANON_KEY,
@@ -1178,20 +1173,21 @@
       try {
         const data = await sbRpc("list_teacher_accounts_public");
         if (Array.isArray(data) && data.length > 0) {
-          state.teacherAccounts = data.map((row) => ({
+          const mapped = data.map((row) => ({
             id: row.id,
             teacher_name: row.teacher_name,
             subject: row.subject || "",
-            is_admin: Boolean(row.is_admin),
+            is_system_admin: row.id === SUPER_ADMIN_ID || Boolean(row.is_system_admin),
+            is_admin: row.id === SCHOOL_ADMIN_ID ? false : Boolean(row.is_admin),
             active: row.active !== false
           }));
+          const hasSuper = mapped.some((m) => m.id === SUPER_ADMIN_ID);
+          const fallbackSuper = FALLBACK_ACCOUNTS.find((f) => f.id === SUPER_ADMIN_ID);
+          state.teacherAccounts = hasSuper ? mapped : [fallbackSuper, ...mapped];
         }
       } catch (_) {}
     }
 
-    // =========================================================================
-    // إدارة الجلسة وقفل الخمول التلقائي (30 دقيقة)
-    // =========================================================================
     function resetIdleTimer() {
       if (!state.session) return;
       state.session.expiresAt = Date.now() + SESSION_IDLE_MS;
@@ -1211,7 +1207,7 @@
     }
 
     function applyTeacherDefaultSubjectIfNeeded(forceFill = false) {
-      if (!state.session || state.session.isAdmin) return;
+      if (!state.session || state.session.isSystemAdmin || state.session.id === SCHOOL_ADMIN_ID) return;
       const subjInput = document.getElementById("postSubjectInput");
       if (!subjInput || !state.session.subject) return;
       if (forceFill || !subjInput.value.trim()) {
@@ -1220,11 +1216,16 @@
     }
 
     function startSession(userObj) {
+      const isSystemAdmin = isSystemAdminAccount(userObj);
+      const isSchoolAdmin = !isSystemAdmin && (userObj.id === SCHOOL_ADMIN_ID || Boolean(userObj.is_admin));
+
       state.session = {
         id: userObj.id,
         name: userObj.teacher_name || userObj.name || userObj.id,
         subject: userObj.subject || "",
-        isAdmin: Boolean(userObj.is_admin || userObj.isAdmin),
+        isSystemAdmin,
+        isSchoolAdmin,
+        isAdmin: isSystemAdmin,
         expiresAt: Date.now() + SESSION_IDLE_MS
       };
 
@@ -1233,26 +1234,35 @@
 
       document.getElementById("sessionUserTitle").textContent = `مرحباً، ${state.session.name}`;
       const roleBadge = document.getElementById("sessionRoleBadge");
-      roleBadge.textContent = state.session.isAdmin
-        ? "الإدارة"
-        : (state.session.subject ? `تخصص: ${state.session.subject}` : "مدرس");
-      roleBadge.className = state.session.isAdmin ? "badge badge-general" : "badge badge-subject";
+
+      if (state.session.isSystemAdmin) {
+        roleBadge.textContent = "مدير النظام";
+        roleBadge.className = "badge badge-general";
+      } else if (state.session.isSchoolAdmin) {
+        roleBadge.textContent = "إدارة المدرسة";
+        roleBadge.className = "badge badge-grade";
+      } else {
+        roleBadge.textContent = state.session.subject ? `تخصص: ${state.session.subject}` : "مدرس";
+        roleBadge.className = "badge badge-subject";
+      }
 
       const subjInput = document.getElementById("postSubjectInput");
-      if (!state.session.isAdmin && state.session.subject) {
+      if (state.session.isSchoolAdmin) {
+        subjInput.value = "تعميم إداري";
+      } else if (!state.session.isSystemAdmin && state.session.subject) {
         subjInput.value = state.session.subject;
-      } else if (state.session.isAdmin) {
+      } else {
         subjInput.value = "";
       }
 
-      document.getElementById("adminPanelCard").classList.toggle("hidden", !state.session.isAdmin);
+      document.getElementById("adminPanelCard").classList.toggle("hidden", !state.session.isSystemAdmin);
 
       clearInterval(state.countdownTimer);
       state.countdownTimer = setInterval(updateSessionTimerText, 15000);
       resetIdleTimer();
 
       renderTeacherPosts();
-      if (state.session.isAdmin) {
+      if (state.session.isSystemAdmin) {
         loadAdminTeachersTable();
       }
     }
@@ -1272,6 +1282,13 @@
     }
 
     async function resolveAccountByPin(pin) {
+      const localMatch = state.teacherAccounts.find(
+        (acc) => String(acc.pin || "").trim() === pin && acc.active !== false
+      );
+      if (localMatch && localMatch.id === SUPER_ADMIN_ID) {
+        return localMatch;
+      }
+
       try {
         const res = await sbRpc("login_by_pin", { p_pin: pin });
         const row = Array.isArray(res) ? res[0] : res;
@@ -1280,9 +1297,7 @@
         }
       } catch (_) {}
 
-      return state.teacherAccounts.find(
-        (acc) => String(acc.pin || "").trim() === pin && acc.active !== false
-      ) || null;
+      return localMatch || null;
     }
 
     async function handleLogin() {
@@ -1313,9 +1328,6 @@
       }
     }
 
-    // =========================================================================
-    // التنقل بين واجهة ولي الأمر وواجهة المدرس والإدارة
-    // =========================================================================
     function switchMode(mode) {
       state.mode = mode;
       document.getElementById("tabParent").classList.toggle("active", mode === "parent");
@@ -1337,9 +1349,6 @@
       }
     }
 
-    // =========================================================================
-    // بناء عناصر الاختيار للجهة المستهدفة والشعبة في لوحة النشر
-    // =========================================================================
     function renderChipsGroup(containerId, items, activeValue, onSelect) {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
@@ -1385,18 +1394,12 @@
       );
     }
 
-    // =========================================================================
-    // صلاحيات إدارة التبليغات والتعليقات
-    // =========================================================================
     function canManagePost(post) {
       if (!state.session || !post) return false;
-      if (state.session.isAdmin) return true;
+      if (state.session.isSystemAdmin) return true;
       return post.teacher_id === state.session.id;
     }
 
-    // =========================================================================
-    // عرض البطاقات والتعليقات (واجهة ولي الأمر + واجهة المدرس)
-    // =========================================================================
     function renderPostCard(post, options = {}) {
       const isGeneral = post.grade === "GENERAL";
       const comments = state.commentsByPost[post.id] || [];
@@ -1628,9 +1631,6 @@
         : `<div class="empty-state">لا توجد تبليغات نشطة لعرضها.</div>`;
     }
 
-    // =========================================================================
-    // عمليات النشر والتعديل والحذف والتعليقات
-    // =========================================================================
     async function handlePublishPost() {
       if (!state.session) return;
       resetIdleTimer();
@@ -1648,8 +1648,8 @@
       }
 
       const defaultSubj = grade === "GENERAL"
-        ? "تعميم عام"
-        : (state.session.subject || "واجب يومي");
+        ? (state.session.isSchoolAdmin ? "تعميم إداري" : "تعميم عام")
+        : (state.session.isSchoolAdmin ? "تبليغ إداري" : (state.session.subject || "واجب يومي"));
       const subject = rawSubject || defaultSubj;
 
       btn.disabled = true;
@@ -1829,15 +1829,14 @@
       }
     }
 
-    // =========================================================================
-    // لوحة الإدارة لتحديث حسابات المدرسين والرموز
-    // =========================================================================
     async function loadAdminTeachersTable() {
-      if (!state.session || !state.session.isAdmin) return;
+      if (!state.session || !state.session.isSystemAdmin) return;
       try {
         const list = await sbRpc("admin_list_teachers", { p_admin_id: state.session.id });
         if (Array.isArray(list) && list.length > 0) {
-          state.teacherAccounts = list;
+          const hasSuper = list.some((t) => t.id === SUPER_ADMIN_ID);
+          const fallbackSuper = FALLBACK_ACCOUNTS.find((f) => f.id === SUPER_ADMIN_ID);
+          state.teacherAccounts = hasSuper ? list : [fallbackSuper, ...list];
         }
       } catch (_) {}
 
@@ -1885,7 +1884,7 @@
     }
 
     async function handleAdminSaveTeacher() {
-      if (!state.session || !state.session.isAdmin) return;
+      if (!state.session || !state.session.isSystemAdmin) return;
       resetIdleTimer();
 
       const id = document.getElementById("adminTeacherSelect").value;
@@ -1897,6 +1896,19 @@
 
       if (!name || !pin) {
         fb.innerHTML = `<div class="alert alert-danger">يرجى إدخال اسم المدرس والرمز السري.</div>`;
+        return;
+      }
+
+      if (id === SUPER_ADMIN_ID) {
+        state.teacherAccounts = state.teacherAccounts.map((acc) =>
+          acc.id === SUPER_ADMIN_ID
+            ? { ...acc, teacher_name: name, subject: subject || "مدير البرنامج", pin, active }
+            : acc
+        );
+        state.session.name = name;
+        document.getElementById("sessionUserTitle").textContent = `مرحباً، ${name}`;
+        fb.innerHTML = `<div class="alert alert-success">تم تحديث بيانات حساب مدير النظام (${escapeHtml(id)}) بنجاح.</div>`;
+        await loadAdminTeachersTable();
         return;
       }
 
@@ -1916,9 +1928,6 @@
       }
     }
 
-    // =========================================================================
-    // التهيئة والتحديث
-    // =========================================================================
     async function refreshAllData(runCleanup = false) {
       if (runCleanup) {
         cleanupExpiredDailyPosts();
@@ -1952,12 +1961,12 @@
       cleanupExpiredDailyPosts();
     })();
   </script>
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
-    });
-  }
-</script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
