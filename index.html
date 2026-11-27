@@ -1284,17 +1284,20 @@
     async function resolveAccountByPin(pin) {
       try {
         const res = await sbRpc("login_teacher_by_pin", { p_pin: pin });
-        const row = Array.isArray(res) ? res[0] : res;
-        if (row && row.id && row.active !== false) {
-          return row;
+        const row = Array.isArray(res)
+          ? res[0]
+          : (res && typeof res === "object" && res.data && typeof res.data === "object" ? res.data : res);
+
+        if (row && typeof row === "object" && row.id && row.active !== false) {
+          return {
+            ...row,
+            is_system_admin: Boolean(row.is_system_admin || row.isSystemAdmin || row.id === SUPER_ADMIN_ID)
+          };
         }
       } catch (_) {}
 
-      return state.teacherAccounts.find(
-        (acc) => String(acc.pin || "").trim() === pin && acc.active !== false
-      ) || null;
+      return null;
     }
-
 
     async function handleLogin() {
       const pin = document.getElementById("loginPinInput").value.trim();
