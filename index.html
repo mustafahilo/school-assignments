@@ -211,14 +211,24 @@
             <h2 class="text-base sm:text-lg font-extrabold text-slate-900">نشر واجب أو تبليغ سريع</h2>
             <p class="text-xs text-slate-500">اختر الصف والشعبة بالأيقونات واكتب التبليغ مباشرة دون حقل تاريخ منفصل</p>
           </div>
-          <button
-            type="button"
-            onclick="openInstallModal()"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
-          >
-            <span>📲</span>
-            <span>أضف إلى شاشة الهاتف</span>
-          </button>
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onclick="lockTeacherSession()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 cursor-pointer"
+            >
+              <span>🔒</span>
+              <span>قفل وضع المدرس</span>
+            </button>
+            <button
+              type="button"
+              onclick="openInstallModal()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
+            >
+              <span>📲</span>
+              <span>أضف إلى شاشة الهاتف</span>
+            </button>
+          </div>
         </div>
 
         <!-- اختصار اسم المدرس والمادة -->
@@ -366,6 +376,60 @@
       </p>
     </div>
   </footer>
+
+  <!-- نافذة قفل الرمز السري للمدرسين -->
+  <div id="teacher-pin-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
+    <form onsubmit="handleTeacherPinSubmit(event)" class="bg-white rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-xl border border-slate-200 space-y-4 animate-fade-in">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔐</span>
+          <h3 class="text-base font-extrabold text-slate-900">دخول الهيئة التعليمية</h3>
+        </div>
+        <button
+          type="button"
+          onclick="closeTeacherPinModal(true)"
+          class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+          aria-label="إغلاق"
+        >
+          ✕
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-600 leading-relaxed">
+        أدخل الرمز السري المخصص للمدرسين للوصول إلى نشر وإدارة التبليغات.
+      </p>
+
+      <div>
+        <label for="teacher-pin-input" class="block text-xs font-bold text-slate-700 mb-1">الرمز السري (PIN)</label>
+        <input
+          id="teacher-pin-input"
+          type="password"
+          inputmode="numeric"
+          autocomplete="off"
+          required
+          placeholder="••••"
+          class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-center tracking-widest focus:outline-none focus:border-brand-600"
+        />
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-1">
+        <button
+          type="button"
+          onclick="closeTeacherPinModal(true)"
+          class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"
+        >
+          إلغاء
+        </button>
+        <button
+          type="submit"
+          id="verify-pin-btn"
+          class="px-5 py-2 rounded-xl text-xs font-extrabold bg-brand-700 hover:bg-brand-800 text-white cursor-pointer"
+        >
+          تحقق ودخول
+        </button>
+      </div>
+    </form>
+  </div>
 
   <!-- نافذة الإرشاد: أضف إلى شاشة الهاتف -->
   <div id="install-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
@@ -535,6 +599,7 @@ create policy "Allow public delete announcements"
     const POSTS_STORAGE_KEY = 'mutafawoqeen1_daily_posts_v1';
     const SHORTCUT_STORAGE_KEY = 'mutafawoqeen1_teacher_shortcut_v1';
     const CHILDREN_STORAGE_KEY = 'mutafawoqeen1_parent_shortcuts_v1';
+    const TEACHER_PIN_SESSION_KEY = 'mutafawoqeen1_teacher_pin_v1';
 
     const GRADES = [
       { id: '1', label: 'الأول', icon: '1️⃣' },
@@ -560,6 +625,7 @@ create policy "Allow public delete announcements"
       savedChildren: [],
       pendingAttachment: null,
       cloudConnected: false,
+      teacherPin: '',
     };
 
     function escapeHtml(str) {
@@ -669,6 +735,110 @@ create policy "Allow public delete announcements"
       const cfg = getActiveSupabaseConfig();
       const base = cfg.SUPABASE_URL.replace(/\/+$/, '');
       return `${base}/rest/v1/${cfg.TABLE_NAME}${query}`;
+    }
+
+    function getSupabaseRpcEndpoint(fnName) {
+      const cfg = getActiveSupabaseConfig();
+      const base = cfg.SUPABASE_URL.replace(/\/+$/, '');
+      return `${base}/rest/v1/rpc/${fnName}`;
+    }
+
+    // ==================== قفل الرمز السري للمدرسين ====================
+    function loadSavedTeacherPin() {
+      try {
+        const saved = sessionStorage.getItem(TEACHER_PIN_SESSION_KEY);
+        if (saved) state.teacherPin = saved;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function saveTeacherPinSession(pin) {
+      state.teacherPin = pin;
+      try {
+        sessionStorage.setItem(TEACHER_PIN_SESSION_KEY, pin);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function clearTeacherPinSession() {
+      state.teacherPin = '';
+      try {
+        sessionStorage.removeItem(TEACHER_PIN_SESSION_KEY);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function openTeacherPinModal() {
+      const modal = document.getElementById('teacher-pin-modal');
+      const input = document.getElementById('teacher-pin-input');
+      if (input) input.value = '';
+      modal?.classList.remove('hidden');
+      modal?.classList.add('flex');
+      setTimeout(() => input?.focus(), 60);
+    }
+
+    function closeTeacherPinModal(returnToParent = false) {
+      const modal = document.getElementById('teacher-pin-modal');
+      modal?.classList.add('hidden');
+      modal?.classList.remove('flex');
+      if (returnToParent && !state.teacherPin) {
+        switchMode('parent', true);
+      }
+    }
+
+    function lockTeacherSession() {
+      clearTeacherPinSession();
+      showToast('تم قفل وضع المدرس.', 'info');
+      switchMode('parent', true);
+    }
+
+    async function verifyPinWithSupabase(pin) {
+      if (!isSupabaseConfigured()) {
+        return true;
+      }
+      const res = await fetch(getSupabaseRpcEndpoint('verify_teacher_pin'), {
+        method: 'POST',
+        headers: getSupabaseHeaders(),
+        body: JSON.stringify({ p_pin: pin }),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      return Boolean(data);
+    }
+
+    async function handleTeacherPinSubmit(event) {
+      event.preventDefault();
+      const input = document.getElementById('teacher-pin-input');
+      const btn = document.getElementById('verify-pin-btn');
+      const pin = (input?.value || '').trim();
+      if (!pin) {
+        showToast('أدخل الرمز السري أولاً.', 'warn');
+        return;
+      }
+
+      if (btn) btn.disabled = true;
+      try {
+        const valid = await verifyPinWithSupabase(pin);
+        if (!valid) {
+          showToast('الرمز السري غير صحيح.', 'error');
+          input?.select();
+          return;
+        }
+        saveTeacherPinSession(pin);
+        closeTeacherPinModal(false);
+        activateTeacherView();
+        showToast('تم التحقق وفتح وضع المدرس.', 'success');
+      } catch (err) {
+        console.error('PIN verification error:', err);
+        showToast('تعذّر التحقق من الرمز؛ تأكد من الاتصال بـ Supabase.', 'error');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
     }
 
     function updateConnectionIndicators() {
@@ -826,55 +996,87 @@ create policy "Allow public delete announcements"
     }
 
     async function persistNewPost(post) {
-      state.posts.unshift(post);
-      savePostsLocal();
-
       if (isSupabaseConfigured()) {
         try {
-          const res = await fetch(getSupabaseEndpoint(), {
+          const res = await fetch(getSupabaseRpcEndpoint('add_announcement_secure'), {
             method: 'POST',
             headers: getSupabaseHeaders(),
-            body: JSON.stringify(serializePostToRow(post)),
+            body: JSON.stringify({
+              p_pin: state.teacherPin,
+              p_payload: serializePostToRow(post),
+            }),
           });
           if (!res.ok) {
+            const errText = await res.text();
+            if (errText.includes('INVALID_TEACHER_PIN') || res.status === 401 || res.status === 403) {
+              clearTeacherPinSession();
+              showToast('انتهت صلاحية الرمز السري؛ يرجى إدخاله مجدداً.', 'warn');
+              openTeacherPinModal();
+              return false;
+            }
             throw new Error(`HTTP ${res.status}`);
           }
+          const insertedRow = await res.json();
+          const normalized = insertedRow && typeof insertedRow === 'object'
+            ? normalizeRowToPost(insertedRow)
+            : post;
+          state.posts = [normalized, ...state.posts.filter((x) => x.id !== normalized.id)];
+          savePostsLocal();
           state.cloudConnected = true;
           updateConnectionIndicators();
+          return true;
         } catch (err) {
-          console.error('Supabase insert error:', err);
+          console.error('Supabase secure insert error:', err);
           state.cloudConnected = false;
           updateConnectionIndicators();
-          showToast('حُفظ محلياً لكن فشل الإرسال إلى Supabase.', 'warn');
+          showToast('تعذّر الإرسال إلى Supabase؛ تحقق من الاتصال والرمز السري.', 'error');
+          return false;
         }
       }
+
+      state.posts.unshift(post);
+      savePostsLocal();
+      return true;
     }
 
     async function removePostById(postId) {
-      state.posts = state.posts.filter((x) => x.id !== postId);
-      savePostsLocal();
-
       if (isSupabaseConfigured()) {
         try {
-          const res = await fetch(
-            getSupabaseEndpoint(`?id=eq.${encodeURIComponent(postId)}`),
-            {
-              method: 'DELETE',
-              headers: getSupabaseHeaders(),
-            }
-          );
+          const res = await fetch(getSupabaseRpcEndpoint('delete_announcement_secure'), {
+            method: 'POST',
+            headers: getSupabaseHeaders(),
+            body: JSON.stringify({
+              p_pin: state.teacherPin,
+              p_id: String(postId),
+            }),
+          });
           if (!res.ok) {
+            const errText = await res.text();
+            if (errText.includes('INVALID_TEACHER_PIN') || res.status === 401 || res.status === 403) {
+              clearTeacherPinSession();
+              showToast('انتهت صلاحية الرمز السري؛ يرجى إدخاله مجدداً.', 'warn');
+              openTeacherPinModal();
+              return false;
+            }
             throw new Error(`HTTP ${res.status}`);
           }
+          state.posts = state.posts.filter((x) => x.id !== postId);
+          savePostsLocal();
           state.cloudConnected = true;
           updateConnectionIndicators();
+          return true;
         } catch (err) {
-          console.error('Supabase delete error:', err);
+          console.error('Supabase secure delete error:', err);
           state.cloudConnected = false;
           updateConnectionIndicators();
-          showToast('حُذف محلياً لكن تعذّر الحذف من Supabase.', 'warn');
+          showToast('تعذّر الحذف من Supabase.', 'error');
+          return false;
         }
       }
+
+      state.posts = state.posts.filter((x) => x.id !== postId);
+      savePostsLocal();
+      return true;
     }
 
     // ==================== اختصار المدرس والمادة ====================
@@ -1026,32 +1228,47 @@ create policy "Allow public delete announcements"
     }
 
     // ==================== التبديل بين واجهة ولي الأمر والمدرس ====================
-    function switchMode(mode) {
-      state.mode = mode;
+    function activateTeacherView() {
+      state.mode = 'teacher';
       const parentView = document.getElementById('parent-view');
       const teacherView = document.getElementById('teacher-view');
       const tabParent = document.getElementById('tab-parent');
       const tabTeacher = document.getElementById('tab-teacher');
 
+      parentView?.classList.add('hidden');
+      teacherView?.classList.remove('hidden');
+      tabTeacher?.classList.add('bg-brand-700', 'text-white', 'shadow-xs');
+      tabTeacher?.classList.remove('text-slate-600');
+      tabParent?.classList.remove('bg-brand-700', 'text-white', 'shadow-xs');
+      tabParent?.classList.add('text-slate-600');
+      renderTeacherButtons();
+      renderManageList();
+    }
+
+    function switchMode(mode, force = false) {
       if (mode === 'teacher') {
-        parentView?.classList.add('hidden');
-        teacherView?.classList.remove('hidden');
-        tabTeacher?.classList.add('bg-brand-700', 'text-white', 'shadow-xs');
-        tabTeacher?.classList.remove('text-slate-600');
-        tabParent?.classList.remove('bg-brand-700', 'text-white', 'shadow-xs');
-        tabParent?.classList.add('text-slate-600');
-        renderTeacherButtons();
-        renderManageList();
-      } else {
-        teacherView?.classList.add('hidden');
-        parentView?.classList.remove('hidden');
-        tabParent?.classList.add('bg-brand-700', 'text-white', 'shadow-xs');
-        tabParent?.classList.remove('text-slate-600');
-        tabTeacher?.classList.remove('bg-brand-700', 'text-white', 'shadow-xs');
-        tabTeacher?.classList.add('text-slate-600');
-        renderParentButtons();
-        renderParentView();
+        if (!force && isSupabaseConfigured() && !state.teacherPin) {
+          openTeacherPinModal();
+          return;
+        }
+        activateTeacherView();
+        return;
       }
+
+      state.mode = 'parent';
+      const parentView = document.getElementById('parent-view');
+      const teacherView = document.getElementById('teacher-view');
+      const tabParent = document.getElementById('tab-parent');
+      const tabTeacher = document.getElementById('tab-teacher');
+
+      teacherView?.classList.add('hidden');
+      parentView?.classList.remove('hidden');
+      tabParent?.classList.add('bg-brand-700', 'text-white', 'shadow-xs');
+      tabParent?.classList.remove('text-slate-600');
+      tabTeacher?.classList.remove('bg-brand-700', 'text-white', 'shadow-xs');
+      tabTeacher?.classList.add('text-slate-600');
+      renderParentButtons();
+      renderParentView();
     }
 
     // ==================== أزرار الصفوف والشعب ====================
@@ -1361,6 +1578,11 @@ create policy "Allow public delete announcements"
 
     async function handleTeacherSubmit(event) {
       event.preventDefault();
+      if (isSupabaseConfigured() && !state.teacherPin) {
+        openTeacherPinModal();
+        return;
+      }
+
       const msgEl = document.getElementById('teacher-message');
       const message = (msgEl?.value || '').trim();
       if (!message) {
@@ -1390,9 +1612,11 @@ create policy "Allow public delete announcements"
       const btn = document.getElementById('publish-btn');
       if (btn) btn.disabled = true;
 
-      await persistNewPost(post);
+      const ok = await persistNewPost(post);
 
       if (btn) btn.disabled = false;
+      if (!ok) return;
+
       resetTeacherForm();
       renderManageList();
       renderParentView();
@@ -1400,7 +1624,12 @@ create policy "Allow public delete announcements"
     }
 
     async function handleDeletePost(postId) {
-      await removePostById(postId);
+      if (isSupabaseConfigured() && !state.teacherPin) {
+        openTeacherPinModal();
+        return;
+      }
+      const ok = await removePostById(postId);
+      if (!ok) return;
       renderManageList();
       renderParentView();
       showToast('تم حذف التبليغ.', 'info');
@@ -1493,6 +1722,7 @@ create policy "Allow public delete announcements"
 
     // ==================== التهيئة الأولية ====================
     async function initApp() {
+      loadSavedTeacherPin();
       loadShortcut();
       loadSavedChildren();
       renderParentButtons();
@@ -1502,7 +1732,7 @@ create policy "Allow public delete announcements"
       renderManageList();
     }
 
-   initApp();
+    initApp();
   </script>
   <script>
   (() => {
