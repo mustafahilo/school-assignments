@@ -799,16 +799,12 @@
       return text ? JSON.parse(text) : null;
     }
 
-    // تنظيف التبليغات اليومية التي مرّ عليها أكثر من 7 أيام (مع استثناء GENERAL)
+    // تنظيف التبليغات اليومية التي مرّ عليها أكثر من 7 أيام (مع استثناء GENERAL) عبر دالة قاعدة البيانات الآمنة
     async function cleanupExpiredDailyPosts() {
-      const cutoffIso = new Date(Date.now() - DAILY_RETENTION_MS).toISOString();
       try {
-        await sbRest(
-          `/announcements?grade=neq.GENERAL&created_at=lt.${encodeURIComponent(cutoffIso)}`,
-          { method: "DELETE", headers: { "Prefer": "return=minimal" } }
-        );
+        await sbRpc("purge_expired_daily_announcements");
       } catch (_) {
-        // إذا كانت سياسة الحذف لـ anon غير مفعلة في قاعدة البيانات، سيستبعدها filterActivePosts تلقائياً
+        // في حال عدم توفر الاتصال أو الدالة مؤقتاً، تتكفل filterActivePosts بإخفاء القديم من الواجهة فوراً
       }
     }
 
@@ -1281,7 +1277,6 @@
             p_body: body
           });
         } catch (_) {
-          // إدراج مباشر كخيار بديل إذا لم تكن الدالة مفعلة
           await sbRest("/announcements", {
             method: "POST",
             headers: { "Prefer": "return=minimal" },
@@ -1531,7 +1526,7 @@
     // =========================================================================
     async function refreshAllData(runCleanup = false) {
       if (runCleanup) {
-        await cleanupExpiredDailyPosts();
+        cleanupExpiredDailyPosts();
       }
       await fetchPostsAndComments();
       if (state.mode === "parent") {
@@ -1553,12 +1548,15 @@
       renderParentControls();
       renderTeacherPostControls();
       populateLoginSelect();
-      await cleanupExpiredDailyPosts();
+
       await Promise.all([
         fetchPostsAndComments(),
         loadAccountsListForLogin()
       ]);
       renderParentView();
+
+      // تشغيل تنظيف قاعدة البيانات في الخلفية بعد عرض الصفحة فوراً
+      cleanupExpiredDailyPosts();
     })();
   </script>
 </body>
