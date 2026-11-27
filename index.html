@@ -44,7 +44,7 @@
     .container {
       max-width: 1040px;
       margin: 0 auto;
-      padding: 20px 16px 56px;
+      padding: 20px 16px 36px;
     }
 
     .topbar {
@@ -123,21 +123,29 @@
       flex-wrap: wrap;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
 
+    .pin-login-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      max-width: 460px;
+    }
+
+    .pin-login-row input[type="password"] {
+      flex: 1;
+    }
+
     @media (max-width: 760px) {
-      .grid-2, .grid-3 {
+      .grid-3 {
         grid-template-columns: 1fr;
+      }
+      .pin-login-row {
+        max-width: 100%;
       }
     }
 
@@ -429,7 +437,55 @@
     }
 
     .comment-form-row input[type="text"] {
-      flex: 1 1 200px;
+      flex: 1 1 220px;
+    }
+
+    .guardian-welcome-banner {
+      background: var(--primary-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .guardian-welcome-title {
+      font-size: 1.04rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin: 0;
+    }
+
+    .guardian-students-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .child-row-card {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+
+    .child-row-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    @media (max-width: 820px) {
+      .child-row-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .table-wrap {
@@ -455,6 +511,23 @@
       background: var(--surface-soft);
       font-weight: 800;
       color: #334155;
+    }
+
+    .site-footer {
+      margin-top: 28px;
+      padding: 16px 20px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .site-footer strong {
+      color: var(--primary-dark);
+      font-weight: 800;
     }
 
     .hidden {
@@ -492,64 +565,92 @@
 
     <!-- ==================== واجهة ولي الأمر ==================== -->
     <section id="parentView">
-      <div class="card">
+      <!-- بطاقة تعريف ولي الأمر (تظهر عند أول دخول أو عند التعديل) -->
+      <div id="guardianSetupCard" class="card">
         <div class="card-title">
-          <span>اختر الصف والشعبة لعرض التبليغات اليومية</span>
-          <span class="post-date">التبليغات اليومية للصفوف تبقى لمدة 7 أيام</span>
+          <span>تعريف ولي الأمر واختيار مرحلة وشعبة الأبناء</span>
+          <span class="post-date">يُحفظ لمرة واحدة في جهازك (من طالب إلى 3 طلاب كحد أقصى)</span>
         </div>
 
-        <div class="grid-2">
-          <div>
-            <label>الصف الدراسي</label>
-            <div id="parentGradeChips" class="chips"></div>
+        <div id="guardianDraftRows"></div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="guardianAddChildBtn" class="btn btn-soft btn-sm" type="button" onclick="addGuardianDraftChild()">
+              + إضافة طالب آخر (حتى 3)
+            </button>
+            <button id="guardianCancelEditBtn" class="btn btn-soft btn-sm hidden" type="button" onclick="cancelGuardianEdit()">
+              إلغاء التعديل
+            </button>
           </div>
-          <div>
-            <label>الشعبة</label>
-            <div id="parentSectionChips" class="chips"></div>
-          </div>
+          <button class="btn btn-primary" type="button" onclick="saveGuardianProfile()">
+            حفظ وعرض التبليغات
+          </button>
         </div>
+
+        <div id="guardianSetupFeedback"></div>
       </div>
 
-      <div class="card">
-        <div class="card-title">
-          <span id="parentSelectedHeading">تبليغات الصف الأول — شعبة أ</span>
-          <span id="parentPostsCount" class="badge badge-grade">0 تبليغ</span>
+      <!-- المحتوى المخصص لولي الأمر بعد التعريف -->
+      <div id="guardianContentArea" class="hidden">
+        <div class="guardian-welcome-banner">
+          <div>
+            <h2 id="guardianWelcomeHeading" class="guardian-welcome-title">مرحباً</h2>
+            <div id="guardianChildrenSummary" class="guardian-students-tags"></div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-soft btn-sm" type="button" onclick="refreshAllData(true)">تحديث</button>
+            <button class="btn btn-soft btn-sm" type="button" onclick="startGuardianEdit()">
+              تعديل بيانات الأبناء
+            </button>
+          </div>
         </div>
-        <div id="parentGradePosts" class="post-list"></div>
-      </div>
 
-      <div class="card">
-        <div class="card-title">
-          <span>التعميمات العامة للمدرسة</span>
-          <span id="parentGeneralCount" class="badge badge-general">0 تعميم</span>
+        <!-- القسم العلوي: تبليغات صفوف وشعب الأبناء فقط -->
+        <div class="card">
+          <div class="card-title">
+            <span id="parentChildrenPostsHeading">تبليغات صفوف أبنائي</span>
+            <span id="parentChildrenPostsCount" class="badge badge-grade">0 تبليغ</span>
+          </div>
+          <div id="parentChildFilterChips" class="chips" style="margin-bottom: 14px;"></div>
+          <div id="parentChildrenPosts" class="post-list"></div>
         </div>
-        <div id="parentGeneralPosts" class="post-list"></div>
+
+        <!-- القسم السفلي: التعميمات العامة والنقاشات مع الإدارة -->
+        <div class="card">
+          <div class="card-title">
+            <span>التعميمات العامة والنقاشات مع الإدارة</span>
+            <span id="parentGeneralCount" class="badge badge-general">0 تعميم</span>
+          </div>
+          <div id="parentGeneralPosts" class="post-list"></div>
+        </div>
       </div>
     </section>
 
     <!-- ==================== واجهة المدرس والإدارة ==================== -->
     <section id="teacherView" class="hidden">
-      <!-- نموذج تسجيل الدخول -->
+      <!-- نموذج تسجيل الدخول بالرمز السري فقط -->
       <div id="loginCard" class="card">
         <div class="card-title">
           <span>تسجيل دخول المدرسين والإدارة</span>
           <span class="post-date">قفل تلقائي بعد 30 دقيقة من الخمول</span>
         </div>
 
-        <div class="grid-2">
-          <div>
-            <label for="loginAccountSelect">الحساب</label>
-            <select id="loginAccountSelect"></select>
-          </div>
-          <div>
-            <label for="loginPinInput">الرمز السري</label>
-            <input id="loginPinInput" type="password" inputmode="numeric" placeholder="أدخل الرمز السري" onkeydown="if(event.key==='Enter') handleLogin()" />
+        <div>
+          <label for="loginPinInput">الرمز السري</label>
+          <div class="pin-login-row">
+            <input
+              id="loginPinInput"
+              type="password"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="أدخل الرمز السري"
+              onkeydown="if(event.key==='Enter') handleLogin()"
+            />
+            <button id="loginBtn" class="btn btn-primary" type="button" onclick="handleLogin()">دخول</button>
           </div>
         </div>
 
-        <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
-          <button id="loginBtn" class="btn btn-primary" type="button" onclick="handleLogin()">دخول</button>
-        </div>
         <div id="loginFeedback"></div>
       </div>
 
@@ -567,7 +668,7 @@
         <!-- نشر تبليغ جديد -->
         <div class="card">
           <div class="card-title">
-            <span>نشر تبليغ أو تعميم جديد</span>
+            <span>نشر تبليغ أو تعميم / نقاش جديد</span>
             <span class="post-date">التبليغات اليومية للصفوف تُعرض لمدة 7 أيام</span>
           </div>
 
@@ -584,13 +685,13 @@
 
             <div>
               <label for="postSubjectInput">المادة / العنوان المختصر</label>
-              <input id="postSubjectInput" type="text" maxlength="60" placeholder="مثال: رياضيات أو تعميم إداري" />
+              <input id="postSubjectInput" type="text" maxlength="60" placeholder="مثال: رياضيات أو نقاش مع أولياء الأمور" />
             </div>
           </div>
 
           <div style="margin-top: 14px;">
             <label for="postBodyInput">نص التبليغ</label>
-            <textarea id="postBodyInput" maxlength="2000" placeholder="اكتب الواجب اليومي أو التبليغ هنا..."></textarea>
+            <textarea id="postBodyInput" maxlength="2000" placeholder="اكتب الواجب اليومي أو التعميم أو موضوع النقاش هنا..."></textarea>
           </div>
 
           <div style="margin-top: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -631,7 +732,7 @@
               <input id="adminTeacherNameInput" type="text" maxlength="80" />
             </div>
             <div>
-              <label for="adminTeacherSubjectInput">المادة</label>
+              <label for="adminTeacherSubjectInput">المادة / التخصص</label>
               <input id="adminTeacherSubjectInput" type="text" maxlength="60" />
             </div>
           </div>
@@ -663,7 +764,7 @@
                 <tr>
                   <th>المعرّف</th>
                   <th>الاسم</th>
-                  <th>المادة</th>
+                  <th>المادة / التخصص</th>
                   <th>الرمز</th>
                   <th>الحالة</th>
                   <th>إجراء</th>
@@ -675,6 +776,10 @@
         </div>
       </div>
     </section>
+
+    <footer class="site-footer">
+      ثانوية المتفوقين الأولى للبنين • <strong>تصميم وتطوير: د. مصطفى حلو علي</strong>
+    </footer>
   </div>
 
   <script>
@@ -690,8 +795,9 @@
     const DAILY_RETENTION_MS = DAILY_RETENTION_DAYS * 24 * 60 * 60 * 1000;
     const SESSION_IDLE_MS = 30 * 60 * 1000;
     const MAX_COMMENT_LENGTH = 250;
+    const MAX_GUARDIAN_CHILDREN = 3;
+    const GUARDIAN_PROFILE_KEY = "motafawiqeen_guardian_profile_v2";
 
-    // قائمة افتراضية لـ 50 حساب مدرس + حساب الإدارة في حال عدم تحميل الجدول بعد
     const FALLBACK_ACCOUNTS = [
       { id: "admin", teacher_name: "الإدارة المدرسية", subject: "الإدارة", pin: "990001", is_admin: true, active: true },
       ...Array.from({ length: 50 }, (_, idx) => {
@@ -709,18 +815,259 @@
 
     const state = {
       mode: "parent",
-      parentGrade: "الأول",
-      parentSection: "أ",
       postGrade: "الأول",
       postSection: "أ",
       posts: [],
       commentsByPost: {},
       openComments: {},
+      guardianChildren: [], // [{ name, grade, section }]
+      guardianDraftChildren: [],
+      isEditingGuardian: false,
+      activeChildFilterIndex: "ALL", // "ALL" أو رقم الطالب (0, 1, 2)
       teacherAccounts: [...FALLBACK_ACCOUNTS],
       session: null, // { id, name, subject, isAdmin, expiresAt }
       idleTimer: null,
       countdownTimer: null
     };
+
+    // =========================================================================
+    // إدارة ملف ولي الأمر وحفظ الأبناء (من 1 إلى 3 مع الصف والشعبة لكل طالب)
+    // =========================================================================
+    function cleanStudentName(raw) {
+      return String(raw || "")
+        .replace(/^ولي\s*أمر\s*(الطالب|الطلاب)\s*[:：\-–]*\s*/i, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function hasFullStudentName(raw) {
+      const cleaned = cleanStudentName(raw);
+      const parts = cleaned.split(" ").filter((p) => p.length >= 2);
+      return parts.length >= 2 && cleaned.length >= 5;
+    }
+
+    function normalizeGradeValue(rawGrade) {
+      const val = String(rawGrade || "").replace(/^الصف\s*/i, "").trim();
+      return GRADES.includes(val) ? val : GRADES[0];
+    }
+
+    function normalizeSectionValue(rawSection) {
+      const val = String(rawSection || "").replace(/^شعبة\s*/i, "").trim();
+      return SECTIONS.includes(val) ? val : SECTIONS[0];
+    }
+
+    function loadSavedGuardianProfile() {
+      try {
+        const raw = localStorage.getItem(GUARDIAN_PROFILE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed
+          .map((item) => ({
+            name: cleanStudentName(item && item.name ? item.name : ""),
+            grade: normalizeGradeValue(item && item.grade ? item.grade : GRADES[0]),
+            section: normalizeSectionValue(item && item.section ? item.section : SECTIONS[0])
+          }))
+          .filter((item) => hasFullStudentName(item.name))
+          .slice(0, MAX_GUARDIAN_CHILDREN);
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function saveGuardianProfileToStorage(childrenList) {
+      const normalized = (childrenList || [])
+        .map((item) => ({
+          name: cleanStudentName(item.name),
+          grade: normalizeGradeValue(item.grade),
+          section: normalizeSectionValue(item.section)
+        }))
+        .filter((item) => hasFullStudentName(item.name))
+        .slice(0, MAX_GUARDIAN_CHILDREN);
+
+      state.guardianChildren = normalized;
+      state.activeChildFilterIndex = "ALL";
+      try {
+        localStorage.setItem(GUARDIAN_PROFILE_KEY, JSON.stringify(normalized));
+      } catch (_) {}
+      return normalized;
+    }
+
+    function formatGuardianGreeting(childrenList) {
+      const list = childrenList || [];
+      if (list.length === 0) return "مرحباً، ولي الأمر";
+      if (list.length === 1) {
+        return `مرحباً، ولي أمر الطالب: ${list[0].name}`;
+      }
+      const names = list.map((c) => c.name).join("، ");
+      return `مرحباً، ولي أمر الطلاب: ${names}`;
+    }
+
+    function formatGuardianAuthorTag(childrenList) {
+      const list = childrenList || [];
+      if (list.length === 0) return "ولي أمر";
+      if (list.length === 1) {
+        return `ولي أمر الطالب: ${list[0].name}`;
+      }
+      return `ولي أمر الطلاب: ${list.map((c) => c.name).join("، ")}`;
+    }
+
+    function renderGuardianSetupCard() {
+      const setupCard = document.getElementById("guardianSetupCard");
+      const contentArea = document.getElementById("guardianContentArea");
+      const hasSavedProfile = state.guardianChildren.length > 0;
+      const shouldShowSetup = !hasSavedProfile || state.isEditingGuardian;
+
+      setupCard.classList.toggle("hidden", !shouldShowSetup);
+      contentArea.classList.toggle("hidden", shouldShowSetup);
+
+      if (!shouldShowSetup) {
+        return;
+      }
+
+      if (state.guardianDraftChildren.length === 0) {
+        state.guardianDraftChildren = hasSavedProfile
+          ? state.guardianChildren.map((c) => ({ ...c }))
+          : [{ name: "", grade: GRADES[0], section: SECTIONS[0] }];
+      }
+
+      const cancelBtn = document.getElementById("guardianCancelEditBtn");
+      cancelBtn.classList.toggle("hidden", !hasSavedProfile);
+
+      const addBtn = document.getElementById("guardianAddChildBtn");
+      addBtn.classList.toggle("hidden", state.guardianDraftChildren.length >= MAX_GUARDIAN_CHILDREN);
+
+      const rowsContainer = document.getElementById("guardianDraftRows");
+      rowsContainer.innerHTML = "";
+
+      state.guardianDraftChildren.forEach((child, idx) => {
+        const gradeOptionsHtml = GRADES.map(
+          (g) => `<option value="${escapeHtml(g)}" ${child.grade === g ? "selected" : ""}>الصف ${escapeHtml(g)}</option>`
+        ).join("");
+
+        const sectionOptionsHtml = SECTIONS.map(
+          (s) => `<option value="${escapeHtml(s)}" ${child.section === s ? "selected" : ""}>شعبة ${escapeHtml(s)}</option>`
+        ).join("");
+
+        const removeBtnHtml = state.guardianDraftChildren.length > 1
+          ? `<button class="btn btn-danger btn-sm" type="button" onclick="removeGuardianDraftChild(${idx})">حذف</button>`
+          : `<span class="post-date" style="padding: 6px 4px;">طالب أساسي</span>`;
+
+        const orderLabel = idx === 0 ? "الأول" : idx === 1 ? "الثاني" : "الثالث";
+
+        const rowEl = document.createElement("div");
+        rowEl.className = "child-row-card";
+        rowEl.innerHTML = `
+          <div class="child-row-grid">
+            <div>
+              <label for="childNameInput-${idx}">اسم الطالب الكامل (${orderLabel})</label>
+              <input
+                id="childNameInput-${idx}"
+                type="text"
+                maxlength="80"
+                value="${escapeHtml(child.name)}"
+                placeholder="مثال: أحمد علي حسن"
+                oninput="updateDraftChildField(${idx}, 'name', this.value)"
+              />
+            </div>
+            <div>
+              <label for="childGradeSelect-${idx}">المرحلة / الصف</label>
+              <select id="childGradeSelect-${idx}" onchange="updateDraftChildField(${idx}, 'grade', this.value)">
+                ${gradeOptionsHtml}
+              </select>
+            </div>
+            <div>
+              <label for="childSectionSelect-${idx}">الشعبة</label>
+              <select id="childSectionSelect-${idx}" onchange="updateDraftChildField(${idx}, 'section', this.value)">
+                ${sectionOptionsHtml}
+              </select>
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              ${removeBtnHtml}
+            </div>
+          </div>
+        `;
+        rowsContainer.appendChild(rowEl);
+      });
+    }
+
+    function syncDraftFromDom() {
+      state.guardianDraftChildren = state.guardianDraftChildren.map((child, idx) => {
+        const nameEl = document.getElementById(`childNameInput-${idx}`);
+        const gradeEl = document.getElementById(`childGradeSelect-${idx}`);
+        const secEl = document.getElementById(`childSectionSelect-${idx}`);
+        return {
+          name: nameEl ? cleanStudentName(nameEl.value) : cleanStudentName(child.name),
+          grade: gradeEl ? normalizeGradeValue(gradeEl.value) : normalizeGradeValue(child.grade),
+          section: secEl ? normalizeSectionValue(secEl.value) : normalizeSectionValue(child.section)
+        };
+      });
+    }
+
+    function updateDraftChildField(idx, field, value) {
+      if (!state.guardianDraftChildren[idx]) return;
+      if (field === "name") {
+        state.guardianDraftChildren[idx].name = value;
+      } else if (field === "grade") {
+        state.guardianDraftChildren[idx].grade = normalizeGradeValue(value);
+      } else if (field === "section") {
+        state.guardianDraftChildren[idx].section = normalizeSectionValue(value);
+      }
+    }
+
+    function addGuardianDraftChild() {
+      syncDraftFromDom();
+      if (state.guardianDraftChildren.length >= MAX_GUARDIAN_CHILDREN) return;
+      state.guardianDraftChildren.push({ name: "", grade: GRADES[0], section: SECTIONS[0] });
+      renderGuardianSetupCard();
+    }
+
+    function removeGuardianDraftChild(idx) {
+      syncDraftFromDom();
+      if (state.guardianDraftChildren.length <= 1) return;
+      state.guardianDraftChildren.splice(idx, 1);
+      renderGuardianSetupCard();
+    }
+
+    function startGuardianEdit() {
+      state.isEditingGuardian = true;
+      state.guardianDraftChildren = state.guardianChildren.map((c) => ({ ...c }));
+      document.getElementById("guardianSetupFeedback").innerHTML = "";
+      renderGuardianSetupCard();
+    }
+
+    function cancelGuardianEdit() {
+      if (state.guardianChildren.length === 0) return;
+      state.isEditingGuardian = false;
+      state.guardianDraftChildren = [];
+      document.getElementById("guardianSetupFeedback").innerHTML = "";
+      renderGuardianSetupCard();
+      renderParentListsOnly();
+    }
+
+    function saveGuardianProfile() {
+      syncDraftFromDom();
+      const fb = document.getElementById("guardianSetupFeedback");
+
+      const anyEntered = state.guardianDraftChildren.filter((c) => c.name.length > 0);
+      if (anyEntered.length === 0) {
+        fb.innerHTML = `<div class="alert alert-danger">يرجى كتابة الاسم الكامل للطالب (مثل: أحمد علي حسن) واختيار الصف والشعبة.</div>`;
+        return;
+      }
+
+      const invalidChild = anyEntered.find((c) => !hasFullStudentName(c.name));
+      if (invalidChild) {
+        fb.innerHTML = `<div class="alert alert-danger">يُشترط كتابة الاسم الكامل للطالب (الاسم واسم الأب/الجد بوضوح) وليس الاسم الأول فقط.</div>`;
+        return;
+      }
+
+      saveGuardianProfileToStorage(anyEntered.slice(0, MAX_GUARDIAN_CHILDREN));
+      state.isEditingGuardian = false;
+      state.guardianDraftChildren = [];
+      fb.innerHTML = "";
+      renderGuardianSetupCard();
+      renderParentListsOnly();
+    }
 
     // =========================================================================
     // دوال مساعدة للتاريخ والمدة (7 أيام للتبليغات اليومية، والتعميمات العامة تبقى)
@@ -799,13 +1146,10 @@
       return text ? JSON.parse(text) : null;
     }
 
-    // تنظيف التبليغات اليومية التي مرّ عليها أكثر من 7 أيام (مع استثناء GENERAL) عبر دالة قاعدة البيانات الآمنة
     async function cleanupExpiredDailyPosts() {
       try {
         await sbRpc("purge_expired_daily_announcements");
-      } catch (_) {
-        // في حال عدم توفر الاتصال أو الدالة مؤقتاً، تتكفل filterActivePosts بإخفاء القديم من الواجهة فوراً
-      }
+      } catch (_) {}
     }
 
     async function fetchPostsAndComments() {
@@ -826,7 +1170,7 @@
       state.commentsByPost = grouped;
     }
 
-    async function loadAccountsListForLogin() {
+    async function loadAccountsMetadata() {
       try {
         const data = await sbRpc("list_teacher_accounts_public");
         if (Array.isArray(data) && data.length > 0) {
@@ -838,10 +1182,7 @@
             active: row.active !== false
           }));
         }
-      } catch (_) {
-        // استخدام القائمة الاحتياطية في حال عدم وجود الدالة العامة
-      }
-      populateLoginSelect();
+      } catch (_) {}
     }
 
     // =========================================================================
@@ -865,6 +1206,15 @@
       el.textContent = `الجلسة نشطة • قفل تلقائي خلال ${mins} دقيقة من الخمول`;
     }
 
+    function applyTeacherDefaultSubjectIfNeeded(forceFill = false) {
+      if (!state.session || state.session.isAdmin) return;
+      const subjInput = document.getElementById("postSubjectInput");
+      if (!subjInput || !state.session.subject) return;
+      if (forceFill || !subjInput.value.trim()) {
+        subjInput.value = state.session.subject;
+      }
+    }
+
     function startSession(userObj) {
       state.session = {
         id: userObj.id,
@@ -879,7 +1229,9 @@
 
       document.getElementById("sessionUserTitle").textContent = `مرحباً، ${state.session.name}`;
       const roleBadge = document.getElementById("sessionRoleBadge");
-      roleBadge.textContent = state.session.isAdmin ? "الإدارة" : (state.session.subject || "مدرس");
+      roleBadge.textContent = state.session.isAdmin
+        ? "الإدارة"
+        : (state.session.subject ? `تخصص: ${state.session.subject}` : "مدرس");
       roleBadge.className = state.session.isAdmin ? "badge badge-general" : "badge badge-subject";
 
       const subjInput = document.getElementById("postSubjectInput");
@@ -915,8 +1267,21 @@
       fb.innerHTML = message ? `<div class="alert alert-info">${escapeHtml(message)}</div>` : "";
     }
 
+    async function resolveAccountByPin(pin) {
+      try {
+        const res = await sbRpc("login_by_pin", { p_pin: pin });
+        const row = Array.isArray(res) ? res[0] : res;
+        if (row && row.id && row.active !== false) {
+          return row;
+        }
+      } catch (_) {}
+
+      return state.teacherAccounts.find(
+        (acc) => String(acc.pin || "").trim() === pin && acc.active !== false
+      ) || null;
+    }
+
     async function handleLogin() {
-      const accountId = document.getElementById("loginAccountSelect").value;
       const pin = document.getElementById("loginPinInput").value.trim();
       const fb = document.getElementById("loginFeedback");
       const btn = document.getElementById("loginBtn");
@@ -930,21 +1295,7 @@
       fb.innerHTML = "";
 
       try {
-        let authenticated = null;
-        try {
-          const res = await sbRpc("verify_teacher_pin", { p_id: accountId, p_pin: pin });
-          const row = Array.isArray(res) ? res[0] : res;
-          if (row && row.id) {
-            authenticated = row;
-          }
-        } catch (_) {
-          // التحقق الاحتياطي من الحساب المحلي إذا لم تتوفر الدالة
-          const localMatch = state.teacherAccounts.find(
-            (acc) => acc.id === accountId && String(acc.pin || "") === pin && acc.active !== false
-          );
-          if (localMatch) authenticated = localMatch;
-        }
-
+        const authenticated = await resolveAccountByPin(pin);
         if (!authenticated) {
           fb.innerHTML = `<div class="alert alert-danger">الرمز السري غير صحيح أو الحساب غير نشط.</div>`;
           return;
@@ -969,15 +1320,21 @@
       document.getElementById("teacherView").classList.toggle("hidden", mode !== "teacher");
 
       if (mode === "parent") {
-        renderParentView();
-      } else if (state.session) {
+        renderGuardianSetupCard();
+        renderParentListsOnly();
+      } else if (!state.session) {
+        setTimeout(() => {
+          const pinInput = document.getElementById("loginPinInput");
+          if (pinInput) pinInput.focus();
+        }, 50);
+      } else {
         resetIdleTimer();
         renderTeacherPosts();
       }
     }
 
     // =========================================================================
-    // بناء عناصر الاختيار (الصفوف، الشعب، الحسابات)
+    // بناء عناصر الاختيار للجهة المستهدفة والشعبة في لوحة النشر
     // =========================================================================
     function renderChipsGroup(containerId, items, activeValue, onSelect) {
       const container = document.getElementById(containerId);
@@ -992,32 +1349,10 @@
       });
     }
 
-    function renderParentControls() {
-      renderChipsGroup(
-        "parentGradeChips",
-        GRADES.map((g) => ({ value: g, label: `الصف ${g}` })),
-        state.parentGrade,
-        (val) => {
-          state.parentGrade = val;
-          renderParentView();
-        }
-      );
-
-      renderChipsGroup(
-        "parentSectionChips",
-        SECTIONS.map((s) => ({ value: s, label: `شعبة ${s}` })),
-        state.parentSection,
-        (val) => {
-          state.parentSection = val;
-          renderParentView();
-        }
-      );
-    }
-
     function renderTeacherPostControls() {
       const gradeOptions = [
         ...GRADES.map((g) => ({ value: g, label: `الصف ${g}` })),
-        { value: "GENERAL", label: "تعميم عام (لكل الصفوف)" }
+        { value: "GENERAL", label: "تعميم / نقاش عام" }
       ];
 
       renderChipsGroup(
@@ -1027,6 +1362,9 @@
         (val) => {
           state.postGrade = val;
           document.getElementById("postSectionWrapper").classList.toggle("hidden", val === "GENERAL");
+          if (val !== "GENERAL") {
+            applyTeacherDefaultSubjectIfNeeded(false);
+          }
           renderTeacherPostControls();
         }
       );
@@ -1037,30 +1375,10 @@
         state.postSection,
         (val) => {
           state.postSection = val;
+          applyTeacherDefaultSubjectIfNeeded(false);
           renderTeacherPostControls();
         }
       );
-    }
-
-    function populateLoginSelect() {
-      const select = document.getElementById("loginAccountSelect");
-      const currentVal = select.value;
-      select.innerHTML = "";
-
-      state.teacherAccounts
-        .filter((acc) => acc.active !== false)
-        .forEach((acc) => {
-          const opt = document.createElement("option");
-          opt.value = acc.id;
-          opt.textContent = acc.is_admin
-            ? `${acc.teacher_name} (${acc.id})`
-            : `${acc.teacher_name} — ${acc.subject || "مدرس"} (${acc.id})`;
-          select.appendChild(opt);
-        });
-
-      if (currentVal && [...select.options].some((o) => o.value === currentVal)) {
-        select.value = currentVal;
-      }
     }
 
     // =========================================================================
@@ -1083,7 +1401,7 @@
       const manageable = canManagePost(post);
 
       const targetBadge = isGeneral
-        ? `<span class="badge badge-general">تعميم عام</span>`
+        ? `<span class="badge badge-general">تعميم / نقاش عام</span>`
         : `<span class="badge badge-grade">الصف ${escapeHtml(post.grade)} — شعبة ${escapeHtml(post.section || "")}</span>`;
 
       const subjectBadge = post.subject
@@ -1125,7 +1443,7 @@
           <div class="post-body">${escapeHtml(post.body)}</div>
           <div class="post-footer">
             <button class="btn btn-soft btn-sm" type="button" onclick="toggleCommentsBox('${escapeHtml(post.id)}')">
-              💬 استفسارات وتعليقات (${comments.length})
+              💬 استفسارات ومناقشات (${comments.length})
             </button>
             <div style="display: flex; gap: 6px; align-items: center;">
               ${manageButtonsHtml}
@@ -1164,23 +1482,30 @@
               </div>
             `;
           }).join("")
-        : `<div class="post-date" style="margin-bottom: 8px;">لا توجد تعليقات بعد على هذا التبليغ.</div>`;
+        : `<div class="post-date" style="margin-bottom: 8px;">لا توجد تعليقات أو ردود بعد على هذا التبليغ.</div>`;
 
       let formHtml = "";
       if (isClosed && !manageable) {
         formHtml = `<div class="alert alert-info" style="margin-top: 6px;">التعليقات مغلقة على هذا التبليغ.</div>`;
-      } else {
-        const defaultName = state.session ? state.session.name : "";
-        const namePlaceholder = state.session
-          ? "اسم المرسل (الافتراضي اسم حسابك)"
-          : "اسم الطالب أو ولي الأمر (اختياري)";
-
+      } else if (state.session) {
         formHtml = `
           <div class="comment-form">
             <div class="comment-form-row">
-              <input id="commentAuthor-${escapeHtml(post.id)}" type="text" maxlength="60" value="${escapeHtml(defaultName)}" placeholder="${escapeHtml(namePlaceholder)}" />
-              <input id="commentBody-${escapeHtml(post.id)}" type="text" maxlength="${MAX_COMMENT_LENGTH}" placeholder="اكتب استفساراً أو رداً قصيراً (حتى 250 حرفاً)..." onkeydown="if(event.key==='Enter') handleAddComment('${escapeHtml(post.id)}')" />
+              <input id="commentAuthor-${escapeHtml(post.id)}" type="text" maxlength="60" value="${escapeHtml(state.session.name)}" placeholder="اسم المرسل" />
+              <input id="commentBody-${escapeHtml(post.id)}" type="text" maxlength="${MAX_COMMENT_LENGTH}" placeholder="اكتب رداً أو توضيحاً على استفسارات أولياء الأمور..." onkeydown="if(event.key==='Enter') handleAddComment('${escapeHtml(post.id)}')" />
               <button class="btn btn-primary btn-sm" type="button" onclick="handleAddComment('${escapeHtml(post.id)}')">إرسال</button>
+            </div>
+            <div id="commentFeedback-${escapeHtml(post.id)}"></div>
+          </div>
+        `;
+      } else {
+        const guardianTag = formatGuardianAuthorTag(state.guardianChildren);
+        formHtml = `
+          <div class="comment-form">
+            <div class="comment-form-row">
+              <input type="text" readonly value="${escapeHtml(guardianTag)}" style="max-width: 310px; background: var(--primary-soft); color: var(--primary-dark); font-weight: 700;" />
+              <input id="commentBody-${escapeHtml(post.id)}" type="text" maxlength="${MAX_COMMENT_LENGTH}" placeholder="اكتب تعليقك أو مشاركتك في النقاش (حتى 250 حرفاً)..." onkeydown="if(event.key==='Enter') handleAddComment('${escapeHtml(post.id)}')" />
+              <button class="btn btn-primary btn-sm" type="button" onclick="handleAddComment('${escapeHtml(post.id)}')">إرسال التعليق</button>
             </div>
             <div id="commentFeedback-${escapeHtml(post.id)}"></div>
           </div>
@@ -1198,35 +1523,90 @@
     function toggleCommentsBox(postId) {
       state.openComments[postId] = !state.openComments[postId];
       if (state.mode === "parent") {
-        renderParentView();
+        renderParentListsOnly();
       } else {
         renderTeacherPosts();
       }
     }
 
-    function renderParentView() {
-      renderParentControls();
+    function renderGuardianSummaryBanner() {
+      const headingEl = document.getElementById("guardianWelcomeHeading");
+      const summaryEl = document.getElementById("guardianChildrenSummary");
+      headingEl.textContent = formatGuardianGreeting(state.guardianChildren);
+
+      summaryEl.innerHTML = state.guardianChildren
+        .map((c) => `<span class="badge badge-grade">${escapeHtml(c.name)} • الصف ${escapeHtml(c.grade)} — شعبة ${escapeHtml(c.section)}</span>`)
+        .join("");
+
+      const filterChipsEl = document.getElementById("parentChildFilterChips");
+      if (state.guardianChildren.length > 1) {
+        filterChipsEl.classList.remove("hidden");
+        const filterItems = [
+          { value: "ALL", label: "الكل (جميع أبنائي)" },
+          ...state.guardianChildren.map((c, idx) => ({
+            value: String(idx),
+            label: `${c.name} (${c.grade} — ${c.section})`
+          }))
+        ];
+        renderChipsGroup(
+          "parentChildFilterChips",
+          filterItems,
+          String(state.activeChildFilterIndex),
+          (val) => {
+            state.activeChildFilterIndex = val === "ALL" ? "ALL" : Number(val);
+            renderParentListsOnly();
+          }
+        );
+      } else {
+        filterChipsEl.classList.add("hidden");
+        filterChipsEl.innerHTML = "";
+      }
+    }
+
+    function renderParentListsOnly() {
+      if (state.guardianChildren.length === 0 || state.isEditingGuardian) {
+        return;
+      }
+
+      renderGuardianSummaryBanner();
 
       const activePosts = filterActivePosts(state.posts);
-      const gradePosts = activePosts.filter(
-        (p) => p.grade === state.parentGrade && (p.section || "أ") === state.parentSection
-      );
+
+      const targetsToMatch = state.activeChildFilterIndex === "ALL"
+        ? state.guardianChildren
+        : [state.guardianChildren[state.activeChildFilterIndex]].filter(Boolean);
+
+      const childrenPosts = activePosts.filter((p) => {
+        if (!p.grade || p.grade === "GENERAL") return false;
+        const pGrade = normalizeGradeValue(p.grade);
+        const pSection = normalizeSectionValue(p.section || SECTIONS[0]);
+        return targetsToMatch.some((t) => t.grade === pGrade && t.section === pSection);
+      });
+
       const generalPosts = activePosts.filter((p) => p.grade === "GENERAL");
 
-      document.getElementById("parentSelectedHeading").textContent =
-        `تبليغات الصف ${state.parentGrade} — شعبة ${state.parentSection}`;
-      document.getElementById("parentPostsCount").textContent = `${gradePosts.length} تبليغ`;
+      const headingPostsEl = document.getElementById("parentChildrenPostsHeading");
+      if (state.activeChildFilterIndex === "ALL") {
+        headingPostsEl.textContent = "تبليغات صفوف أبنائي";
+      } else {
+        const selectedChild = state.guardianChildren[state.activeChildFilterIndex];
+        headingPostsEl.textContent = selectedChild
+          ? `تبليغات ${selectedChild.name} (الصف ${selectedChild.grade} — شعبة ${selectedChild.section})`
+          : "تبليغات صفوف أبنائي";
+      }
+
+      document.getElementById("parentChildrenPostsCount").textContent = `${childrenPosts.length} تبليغ`;
       document.getElementById("parentGeneralCount").textContent = `${generalPosts.length} تعميم`;
 
-      const gradeContainer = document.getElementById("parentGradePosts");
-      gradeContainer.innerHTML = gradePosts.length
-        ? gradePosts.map((p) => renderPostCard(p, { showManageControls: false })).join("")
-        : `<div class="empty-state">لا توجد تبليغات يومية منشورة خلال آخر 7 أيام لهذا الصف والشعبة.</div>`;
+      const childrenContainer = document.getElementById("parentChildrenPosts");
+      childrenContainer.innerHTML = childrenPosts.length
+        ? childrenPosts.map((p) => renderPostCard(p, { showManageControls: false })).join("")
+        : `<div class="empty-state">لا توجد تبليغات يومية منشورة خلال آخر 7 أيام لصفوف أبنائك المحددة حالياً.</div>`;
 
       const generalContainer = document.getElementById("parentGeneralPosts");
       generalContainer.innerHTML = generalPosts.length
         ? generalPosts.map((p) => renderPostCard(p, { showManageControls: false })).join("")
-        : `<div class="empty-state">لا توجد تعميمات عامة حالياً.</div>`;
+        : `<div class="empty-state">لا توجد تعميمات عامة أو نقاشات مع الإدارة حالياً.</div>`;
     }
 
     function renderTeacherPosts() {
@@ -1253,7 +1633,7 @@
 
       const fb = document.getElementById("publishFeedback");
       const btn = document.getElementById("publishPostBtn");
-      const subject = document.getElementById("postSubjectInput").value.trim();
+      const rawSubject = document.getElementById("postSubjectInput").value.trim();
       const body = document.getElementById("postBodyInput").value.trim();
       const grade = state.postGrade;
       const section = grade === "GENERAL" ? "" : state.postSection;
@@ -1262,6 +1642,11 @@
         fb.innerHTML = `<span class="alert alert-danger" style="display:inline-block;margin:0;padding:6px 12px;">يرجى كتابة نص التبليغ.</span>`;
         return;
       }
+
+      const defaultSubj = grade === "GENERAL"
+        ? "تعميم عام"
+        : (state.session.subject || "واجب يومي");
+      const subject = rawSubject || defaultSubj;
 
       btn.disabled = true;
       fb.innerHTML = "";
@@ -1273,7 +1658,7 @@
             p_pin: null,
             p_grade: grade,
             p_section: section,
-            p_subject: subject || (grade === "GENERAL" ? "تعميم عام" : (state.session.subject || "واجب يومي")),
+            p_subject: subject,
             p_body: body
           });
         } catch (_) {
@@ -1285,7 +1670,7 @@
               teacher_name: state.session.name,
               grade,
               section,
-              subject: subject || (grade === "GENERAL" ? "تعميم عام" : (state.session.subject || "واجب يومي")),
+              subject,
               body,
               comments_closed: false
             })
@@ -1356,11 +1741,8 @@
     async function handleAddComment(postId) {
       if (state.session) resetIdleTimer();
 
-      const authorEl = document.getElementById(`commentAuthor-${postId}`);
       const bodyEl = document.getElementById(`commentBody-${postId}`);
       const fbEl = document.getElementById(`commentFeedback-${postId}`);
-
-      const rawAuthor = (authorEl ? authorEl.value : "").trim();
       const rawBody = (bodyEl ? bodyEl.value : "").trim();
 
       if (!rawBody) {
@@ -1374,7 +1756,19 @@
       }
 
       const isTeacherReply = Boolean(state.session);
-      const authorName = rawAuthor || (isTeacherReply ? state.session.name : "ولي أمر");
+      let authorName = "";
+
+      if (isTeacherReply) {
+        const authorEl = document.getElementById(`commentAuthor-${postId}`);
+        authorName = (authorEl ? authorEl.value : "").trim() || state.session.name;
+      } else {
+        if (state.guardianChildren.length === 0) {
+          state.isEditingGuardian = true;
+          renderGuardianSetupCard();
+          return;
+        }
+        authorName = formatGuardianAuthorTag(state.guardianChildren);
+      }
 
       try {
         try {
@@ -1441,9 +1835,7 @@
         if (Array.isArray(list) && list.length > 0) {
           state.teacherAccounts = list;
         }
-      } catch (_) {
-        // الإبقاء على القائمة المتوفرة في الحالة
-      }
+      } catch (_) {}
 
       const sel = document.getElementById("adminTeacherSelect");
       const tbody = document.getElementById("adminTeachersTableBody");
@@ -1515,14 +1907,13 @@
         });
         fb.innerHTML = `<div class="alert alert-success">تم حفظ بيانات الحساب (${escapeHtml(id)}) بنجاح.</div>`;
         await loadAdminTeachersTable();
-        populateLoginSelect();
       } catch (err) {
         fb.innerHTML = `<div class="alert alert-danger">تعذر حفظ بيانات الحساب: ${escapeHtml(err.message)}</div>`;
       }
     }
 
     // =========================================================================
-    // التهيئة والتحديث الدوري
+    // التهيئة والتحديث
     // =========================================================================
     async function refreshAllData(runCleanup = false) {
       if (runCleanup) {
@@ -1530,7 +1921,7 @@
       }
       await fetchPostsAndComments();
       if (state.mode === "parent") {
-        renderParentView();
+        renderParentListsOnly();
       } else if (state.session) {
         renderTeacherPosts();
       }
@@ -1545,17 +1936,15 @@
     });
 
     (async function init() {
-      renderParentControls();
+      state.guardianChildren = loadSavedGuardianProfile();
+      renderGuardianSetupCard();
       renderTeacherPostControls();
-      populateLoginSelect();
 
       await Promise.all([
         fetchPostsAndComments(),
-        loadAccountsListForLogin()
+        loadAccountsMetadata()
       ]);
-      renderParentView();
-
-      // تشغيل تنظيف قاعدة البيانات في الخلفية بعد عرض الصفحة فوراً
+      renderParentListsOnly();
       cleanupExpiredDailyPosts();
     })();
   </script>
